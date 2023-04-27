@@ -49,7 +49,7 @@ function CategorySwiper() {
           pauseOnMouseEnter: true,
         }}
         loop={true}
-        loopFillGroupWithBlank={true}
+        
         modules={[Autoplay, Pagination, Navigation]}
           coverflowEffect={{
             rotate: 50,
