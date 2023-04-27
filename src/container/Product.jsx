@@ -10,13 +10,18 @@ import {
   Box,
 } from "@mui/material";
 
-import {  Shop, ViewAgendaOutlined } from "@mui/icons-material";
-import { NavLink } from "react-router-dom";
+import { Shop, ViewAgendaOutlined } from "@mui/icons-material";
+import { NavLink, useLocation } from "react-router-dom";
 import CategoryList from "../components/Category";
+import { ValidatePath } from "../utills/helper";
 
 function ProductList() {
   const [products, setProducts] = useState([]);
-
+  const location = useLocation();
+  const [pathName,setPathName] = useState(false);
+  // const path = location.pathname;
+  // const pathName = ValidatePath(path);
+  // console.log("abc", pathName);
   useEffect(() => {
     // Fetch data from the API and update the state
     fetch("https://fakestoreapi.com/products")
@@ -25,41 +30,47 @@ function ProductList() {
       .catch((error) => console.error(error));
   }, []);
 
+  useEffect(() => {
+    setPathName(ValidatePath(location.pathname));
+  }, [location]);
+
   return (
     <>
-     
-      <Container sx={{marginBottom:"50px"}}>
-      <CategoryList />
-        <Typography
-          color="otherColor"
-          textAlign="left"
-          sx={{
-            fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-          }}
-          component="h3"
-        >
-          ProductList
-        </Typography>
-       
-        <Grid container spacing={3} sx={{ paddingTop: 5 }}>
+      <Container sx={{ marginBottom: "50px",marinTop:"25px"}} >
+        <CategoryList />
+        {pathName && (
+          <>
+            <Typography
+              mt={3}
+              color="otherColor"
+              textAlign="left"
+              sx={{
+                fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+              }}
+              component="h3"
+            >
+              Product List
+            </Typography>
+          </>
+        )}
+
+        <Grid  container spacing={3} sx={{ paddingTop: 5 }}>
           {products.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product.id}>
               <Card
-                
                 sx={{
                   height: "100%",
                   display: "flex",
                   justifyContent: "space-between",
                   flexDirection: "column",
-                  textDecoration:"none",
-                  
+                  textDecoration: "none",
                 }}
               >
                 <CardMedia
                   component="img"
                   to="/productDetails"
                   p={5}
-                  sx={{ width: "100%", height: "270px", objectFit: "contain",}}
+                  sx={{ width: "100%", height: "270px", objectFit: "contain" }}
                   image={product.image}
                   alt={product.title}
                 />
@@ -253,28 +264,20 @@ export default ProductList;
 // </Box> */
 // }
 <Container sx={{ marginTop: "30px" }}>
-      <Typography
-        color="otherColor"
-        textAlign="left"
-        sx={{
-          fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-        }}
-        component="h3"
-      >
-        Contact Us
-      </Typography>
-      <Grid container spacing={2}>
-      <Grid item xs={12} sm={8} md={4}>
-      
-      </Grid>
-      <Grid item xs={12} sm={8} md={4}>
-       
-      </Grid>
-      <Grid item xs={12} md={4}>
-       
-      </Grid>
-      <Grid item xs={12} md={4}>
-        
-      </Grid>
-    </Grid>
-    </Container>
+  <Typography
+    color="otherColor"
+    textAlign="left"
+    sx={{
+      fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+    }}
+    component="h3"
+  >
+    Contact Us
+  </Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={12} sm={8} md={4}></Grid>
+    <Grid item xs={12} sm={8} md={4}></Grid>
+    <Grid item xs={12} md={4}></Grid>
+    <Grid item xs={12} md={4}></Grid>
+  </Grid>
+</Container>;

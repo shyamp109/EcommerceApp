@@ -18,6 +18,8 @@ function SliderImage() {
     <Box sx={{ maxWidth: "100%", flexGrow: 1 }}>
       
       <Swiper
+         
+          height={700}
           style={{marginTop:"0",marginBotton:"0"}}
           spaceBetween={30}
           centeredSlides={true}
@@ -34,8 +36,8 @@ function SliderImage() {
       >
         {slide_img.map((img, i) => {
           return (
-            <SwiperSlide key={i}>
-              <img className='' src={img} alt="sliderImage" />
+            <SwiperSlide className='myimgcls' key={i}>
+              <img  src={img} alt="sliderImage" />
             </SwiperSlide>
           );
         })}

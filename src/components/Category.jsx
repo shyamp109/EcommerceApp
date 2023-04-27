@@ -9,7 +9,7 @@ import cat5 from "../assets/images/high-heel-shoes.jpg";
 import cat6 from "../assets/images/portrait-handsome-smiling-stylish-young-man-model-wearing-jeans-clothes-sunglasses-fashion-man.jpg";
 import cat7 from "../assets/images/luis-soto-VSDlviLcUMc-unsplash.jpg";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay, Navigation } from "swiper";
@@ -19,25 +19,36 @@ import "swiper/swiper-bundle.min.css";
 import "swiper/swiper.min.css";
 import "../App.css";
 import { Typography } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import { ValidatePath } from "../utills/helper";
 
 SwiperCore.use([EffectCoverflow, Pagination]);
 // if you want to use array
 const slide_img = [cat1, cat2, cat3, cat4, cat5, cat6, cat7,cat1, cat2, cat3, cat4, cat5, cat6, cat7];
 
 function CategorySwiper() {
+  const location = useLocation();
+  const [pathName,setPathName] = useState(false);
+  useEffect(() => {
+    setPathName(ValidatePath(location.pathname));
+  }, [location]);
   return (
     <div>
-      <Typography
-        color="otherColor"
-        textAlign="left"
-        mt={4}
-        sx={{
-          fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-        }}
-        component="h3"
-      >
-        CategoryList
-      </Typography>
+      {pathName && 
+          <>
+            <Typography
+            mt={3}
+            color="otherColor"
+            textAlign="left"
+            sx={{
+              fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+            }}
+            component="h3"
+          >
+            Category List
+          </Typography>
+          </>
+        }
       <Swiper
         effect={"coverflow"}
         grabCursor={true}

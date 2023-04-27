@@ -10,7 +10,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
-
+import styled from "@emotion/styled";
+import {theme} from "../utills/theme";
+const CssTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '&:hover fieldset': {
+      borderColor: theme.palette.secondary.main,
+    },
+  },
+});
 export default function Login() {
   const navigate= useNavigate();
   const [emailError, setEmailError] = React.useState(false);
@@ -82,7 +90,7 @@ export default function Login() {
           Sign in
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <TextField
+        <CssTextField
             margin="normal"
             required
             fullWidth
@@ -96,7 +104,7 @@ export default function Login() {
             onChange={handleEmailChange}
             helperText={emailError}
           />
-          <TextField
+          <CssTextField
             color="secondary"
             margin="normal"
             required

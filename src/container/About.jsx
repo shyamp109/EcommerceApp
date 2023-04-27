@@ -1,20 +1,31 @@
 import { Box, Button, Container, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import aboutimg from "../assets/images/slider1.jpg";
 import { ReadMore, ShoppingBagSharp } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
+import { ValidatePath } from "../utills/helper";
 const About = () => {
+  const location = useLocation();
+  const [pathName,setPathName] = useState(false);
+  useEffect(() => {
+    setPathName(ValidatePath(location.pathname));
+  }, [location]);
   return (
     <Container sx={{ marginTop: "30px" }}>
-      <Typography
-        color="otherColor"
-        textAlign="left"
-        sx={{
-          fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-        }}
-        component="h3"
-      >
-        About Us
-      </Typography>
+      {pathName && 
+          <>
+            <Typography
+            color="otherColor"
+            textAlign="left"
+            sx={{
+              fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+            }}
+            component="h3"
+          >
+            About Us
+          </Typography>
+          </>
+        }
       <Box
         sx={{
           marginTop: "20px",

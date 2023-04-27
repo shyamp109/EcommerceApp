@@ -94,7 +94,7 @@ const Header = () => {
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
-    <Menu
+    <Menu 
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: "top",
@@ -119,6 +119,7 @@ const Header = () => {
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
+      color="primary"
       anchorOrigin={{
         vertical: "top",
         horizontal: "right",
@@ -133,7 +134,7 @@ const Header = () => {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="secondary">
+        <IconButton size="large" aria-label="show 4 new mails"  color="secondary">
           <Badge components={NavLink} to="/cart" badgeContent={4} color="otherColor">
             <ShoppingCart color="secondary" />
           </Badge>
@@ -173,10 +174,10 @@ const Header = () => {
   };
   //menu drawer
   const drawer = (
-    <Box backgroundColor="secondary" onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography
         color="secondary"
-        variant="h6"
+        variant="h4"
         component="div"
         sx={{ flexGrow: 1, my: 2 }}
       >
@@ -194,7 +195,7 @@ const Header = () => {
                 alignItems: "center",
               }}
             >
-              <Button to={item} color="secondary" component={NavLink} key={item}>
+              <Button sx={{fontSize:"15px"}} to={item} color="secondary" component={NavLink} key={item}>
                 {item}
               </Button>
             </ListItemButton>
@@ -207,7 +208,7 @@ const Header = () => {
     <>
 
       <Box>
-        <AppBar color="primary" component={"nav"}>
+        <AppBar color="secondary" component={"nav"}>
           <Box
             sx={{
               display: "flex",
@@ -218,7 +219,7 @@ const Header = () => {
             }}
           >
             <IconButton
-              color="secondary"
+              color="primary"
               aria-label="open drawer"
               edge="start"
               sx={{
@@ -227,16 +228,16 @@ const Header = () => {
               }}
               onClick={handleDrawerToggle}
             >
-              <MenuIcon />
+              <MenuIcon  />
             </IconButton>
 
             <Box sx={{ display: { sm: "none" } }}>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
+              <Search >
+                <SearchIconWrapper >
+                  <SearchIcon  />
                 </SearchIconWrapper>
-                <StyledInputBase sx={{border:"1px solid gray",borderRadius:"10px"}}
-                color="secondary"
+                <StyledInputBase sx={{border:"1px solid white",borderRadius:"10px"}}
+                  color="primary"
                   placeholder="Search…"
                   inputProps={{ "aria-label": "search" }}
                 />
@@ -244,9 +245,10 @@ const Header = () => {
             </Box>
 
             <Typography
-              color="secondary"
+              color="primary"
               variant="h4"
-              component="div"
+              component={NavLink}
+              to="/"
               sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
             >
               ShopWapp
@@ -258,7 +260,8 @@ const Header = () => {
                   to={item}
                   component={NavLink}
                   key={item}
-                  color="otherColor"
+                  color="primary"
+                  sx={{fontSize:"15px"}}
                 >
                   {item}
                 </Button>
@@ -268,9 +271,9 @@ const Header = () => {
             <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
               <Search>
                 <SearchIconWrapper>
-                  <SearchIcon />
+                  <SearchIcon color="priamry" />
                 </SearchIconWrapper>
-                <StyledInputBase sx={{border:"1px solid gray",borderRadius:"10px"}}
+                <StyledInputBase sx={{border:"1px solid white",borderRadius:"10px"}}
                   placeholder="Search…"
                   inputProps={{ "aria-label": "search" }}
                 />
@@ -280,7 +283,7 @@ const Header = () => {
               <IconButton
                 size="large"
                 aria-label="show 4 new mails"
-                color="secondary"
+                color="primary"
                 component={NavLink}
                 to="/cart"
               >
@@ -291,7 +294,7 @@ const Header = () => {
               <IconButton
                 size="large"
                 aria-label="show 17 new notifications"
-                color="secondary"
+                color="primary"
               >
                 <Badge badgeContent={17} color="otherColor">
                   <NotificationsIcon />
@@ -304,7 +307,7 @@ const Header = () => {
                 aria-controls={menuId}
                 aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
-                color="secondary"
+                color="primary"
               >
                 <AccountCircle />
               </IconButton>
@@ -318,7 +321,7 @@ const Header = () => {
                 onClick={handleMobileMenuOpen}
                 color="secondary"
               >
-                <MoreIcon />
+                <MoreIcon color="primary" />
               </IconButton>
             </Box>
           </Box>
@@ -329,6 +332,7 @@ const Header = () => {
           <Drawer
             variant="temporary"
             open={mobileOpen}
+            color="primary"
             onClose={handleDrawerToggle}
             sx={{
               display: { xs: "block", sm: "none" },

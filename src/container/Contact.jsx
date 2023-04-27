@@ -12,7 +12,18 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { ValidatePath } from "../utills/helper";
+import styled from "@emotion/styled";
+import {theme} from "../utills/theme";
+const CssTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '&:hover fieldset': {
+      borderColor: theme.palette.secondary.main,
+    },
+  },
+});
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,6 +31,11 @@ const Contact = () => {
     address: "",
     message: "",
   });
+  const location = useLocation();
+  const [pathName,setPathName] = useState(false);
+  useEffect(() => {
+    setPathName(ValidatePath(location.pathname));
+  }, [location]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,22 +48,26 @@ const Contact = () => {
   };
   return (
     <Container sx={{ marginTop: "30px" }}>
-      <Typography
-        color="otherColor"
-        textAlign="left"
-        sx={{
-          fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-        }}
-        component="h3"
-      >
-        Contact Us
-      </Typography>
+      {pathName && 
+          <>
+            <Typography
+            color="otherColor"
+            textAlign="left"
+            sx={{
+              fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+            }}
+            component="h3"
+          >
+            Contact Us
+          </Typography>
+          </>
+        }
       <Box
         sx={{
           display: "flex",
           flexDirection: {
             xs: "column",
-            sm: "column",
+            sm: "row",
             md: "row",
             lg: "row",
             marginBottom: "50px",
@@ -67,8 +87,6 @@ const Contact = () => {
               lg: "row",
               xl: "row",
             },
-
-            flexWrap: "wrap",
             marginTop: "20px",
             marginLeft: "0",
             gap: "20px",
@@ -77,7 +95,7 @@ const Contact = () => {
           <Grid
             item
             xs={12}
-            sm={8}
+            sm={4}
             md={4}
             p={0}
             sx={{
@@ -88,6 +106,7 @@ const Contact = () => {
               alignItems: "center",
               gap: "10px",
               paddingBottom: "10px",
+              borderRadius:"10px",
             }}
           >
             <LocationCity fontSize="large" color="secondary" />
@@ -101,7 +120,7 @@ const Contact = () => {
           <Grid
             item
             xs={12}
-            sm={8}
+            sm={4}
             md={4}
             p={0}
             sx={{
@@ -112,6 +131,7 @@ const Contact = () => {
               alignItems: "center",
               gap: "10px",
               paddingBottom: "10px",
+              borderRadius:"10px",
             }}
           >
             <SmartphoneRounded fontSize="large" color="secondary" />
@@ -125,7 +145,7 @@ const Contact = () => {
           <Grid
             item
             xs={12}
-            sm={8}
+            sm={4}
             md={4}
             p={0}
             sx={{
@@ -136,6 +156,7 @@ const Contact = () => {
               alignItems: "center",
               gap: "10px",
               paddingBottom: "10px",
+              borderRadius:"10px",
             }}
           >
             <FaxRounded fontSize="large" color="secondary" />
@@ -149,7 +170,7 @@ const Contact = () => {
           <Grid
             item
             xs={12}
-            sm={8}
+            sm={4}
             md={4}
             p={0}
             sx={{
@@ -160,6 +181,7 @@ const Contact = () => {
               alignItems: "center",
               gap: "10px",
               paddingBottom: "10px",
+              borderRadius:"10px",
             }}
           >
             <EmailRounded fontSize="large" color="secondary" />
@@ -174,7 +196,7 @@ const Contact = () => {
 
         <Box>
           <form onSubmit={handleSubmit}>
-            <TextField
+            <CssTextField
               label="Name"
               name="name"
               color="secondary"
@@ -185,7 +207,7 @@ const Contact = () => {
               fullWidth
               required
             />
-            <TextField
+            <CssTextField
               label="Email"
               name="email"
               color="secondary"
@@ -197,7 +219,7 @@ const Contact = () => {
               required
             />
 
-            <TextField
+            <CssTextField
               label="Message"
               name="message"
               color="secondary"

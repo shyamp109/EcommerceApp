@@ -10,21 +10,28 @@ import {
  
   IconButton,
 } from "@mui/material";
-import { PhotoCamera } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
 
 import images from "../assets/images/slider1.jpg";
+import { ValidatePath } from "../utills/helper";
+import { PhotoCamera } from "@mui/icons-material";
 
 function Profile() {
+  
   const [image, setImage] = useState(images);
+  const location = useLocation();
+  const path = location.pathname;
+  const pathName = ValidatePath({path});
   const onImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       setImage(URL.createObjectURL(event.target.files[0]));
     }
   };
+ 
   return (
     <>
       <Container sx={{ marginBottom: "50px" }}>
-        <Typography
+        {/* <Typography
           color="otherColor"
           textAlign="left"
           mt={4}
@@ -34,7 +41,21 @@ function Profile() {
           component="h3"
         >
           Your Profile
-        </Typography>
+        </Typography> */}
+         {pathName && 
+          <>
+            <Typography
+            color="otherColor"
+            textAlign="left"
+            sx={{
+              fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+            }}
+            component="h3"
+          >
+            {pathName}
+          </Typography>
+          </>
+        }
         <Box
           sx={{
             padding: 4,

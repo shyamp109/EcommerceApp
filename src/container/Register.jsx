@@ -9,7 +9,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
-
+import styled from "@emotion/styled";
+import {theme} from "../utills/theme";
+const CssTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '&:hover fieldset': {
+      borderColor: theme.palette.secondary.main,
+    },
+  },
+});
 export default function Register() {
   const navigate = useNavigate();
   const [fNameError, setFnameError] = React.useState(false);
@@ -109,7 +117,7 @@ export default function Register() {
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CssTextField
                 color="secondary"
                 sx={{ borderColor: "red" }}
                 autoComplete="given-name"
@@ -125,7 +133,7 @@ export default function Register() {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CssTextField
                 required
                 fullWidth
                 color="secondary"
@@ -139,7 +147,7 @@ export default function Register() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <CssTextField
                 required
                 fullWidth
                 color="secondary"
@@ -153,7 +161,7 @@ export default function Register() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <CssTextField
                 required
                 fullWidth
                 color="secondary"
