@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -42,7 +43,11 @@
   padding-top: 20px;
   padding-bottom: 20px;
 }
-
+.mySwiperJs{
+  width: 100%;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 .swiper-slide {
   background-position: center;
   background-size: cover;

@@ -3,15 +3,15 @@ import {
   Typography,
   Container,
   Box,
-  Avatar,
+ 
   TextField,
   Grid,
   Button,
-  Input,
+ 
   IconButton,
 } from "@mui/material";
-import { LockOutlined, PhotoCamera } from "@mui/icons-material";
-import { Link, NavLink } from "react-router-dom";
+import { PhotoCamera } from "@mui/icons-material";
+
 import images from "../assets/images/slider1.jpg";
 
 function Profile() {
@@ -63,7 +63,7 @@ function Profile() {
               }}
             >
               <img
-                alt="preview image"
+                alt="previewimage"
                 src={image}
                 height={100}
                 width={100}

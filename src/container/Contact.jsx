@@ -216,6 +216,7 @@ const Contact = () => {
               color="secondary"
               size="large"
               fullWidth
+              sx={{color:"white"}}
             >
               Submit
             </Button>
