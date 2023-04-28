@@ -14,6 +14,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { IconButton, InputAdornment } from "@mui/material";
 import styled from "@emotion/styled";
 import {theme} from "../utills/theme";
+import { api } from "../api/index";
+
 const CssTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     '&:hover fieldset': {
@@ -96,7 +98,22 @@ export default function Register() {
       setPasswordError(false);
     }
     if (email && password && firstName && lastName) {
-      navigate("/login");
+        const values = {
+          firstName:firstName,
+          lastName:lastName,
+          email:email,
+          password:password,
+        }
+        // setLoading(true);
+        try {
+            const { data } = api.auth.register(values);
+            console.log(data);
+            navigate('/login');
+        } catch (error) {
+            console.log("error occures")
+        }
+    
+      
     }
   };
 

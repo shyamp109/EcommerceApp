@@ -91,7 +91,11 @@ const Header = () => {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
+  const logout = () =>{
+    setAnchorEl(null);
+    handleMobileMenuClose();
+    localStorage.clear();
+  }
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu 
@@ -111,7 +115,7 @@ const Header = () => {
     >
       <MenuItem component={NavLink} to="/profile" onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem component={NavLink} to="/login" onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem component={NavLink} to="/login" onClick={()=>logout()}>Logout</MenuItem>
     </Menu>
   );
 

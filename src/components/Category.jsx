@@ -60,11 +60,11 @@ function CategorySwiper() {
         grabCursor={true}
         centeredSlides={true}
         slidesPerView={"auto"}
-        autoplay={{
-          delay: 550,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-        }}
+        // autoplay={{
+        //   delay: 550,
+        //   disableOnInteraction: false,
+        //   pauseOnMouseEnter: true,
+        // }}
         loop={true}
         
         modules={[Autoplay, Pagination, Navigation]}

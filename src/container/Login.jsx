@@ -16,6 +16,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import styled from "@emotion/styled";
 import {theme} from "../utills/theme";
 import { IconButton, InputAdornment } from "@mui/material";
+import { api } from "../api";
 const CssTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     '&:hover fieldset': {
@@ -28,7 +29,7 @@ export default function Login() {
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const handleSubmit = (event) => {
+  const handleSubmit =async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
@@ -48,7 +49,19 @@ export default function Login() {
       setPasswordError(false);
     }
     if (email && password) {
-      navigate("/");
+      const values = {
+        email:email,
+        password:password,
+      }
+      try {
+        const { data } =await api.auth.login(values);
+        localStorage.setItem("loginToken",data.token)
+        // console.log(data.token)
+        navigate('/');
+       
+    } catch (error) {
+       console.log(error);
+    }
     }
   };
   const handleTogglePasswordVisibility = () => {
