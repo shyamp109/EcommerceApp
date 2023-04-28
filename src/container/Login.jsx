@@ -10,8 +10,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
+// import IconButton from '@mui/icons-material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import styled from "@emotion/styled";
 import {theme} from "../utills/theme";
+import { IconButton, InputAdornment } from "@mui/material";
 const CssTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     '&:hover fieldset': {
@@ -23,7 +27,7 @@ export default function Login() {
   const navigate= useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
-
+  const [showPassword, setShowPassword] = React.useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -47,7 +51,9 @@ export default function Login() {
       navigate("/");
     }
   };
-
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const handleEmailChange = (event) => {
     if (!event.target.value.includes("@")) {
       setEmailError("Please enter a valid email address.");
@@ -111,9 +117,21 @@ export default function Login() {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="current-password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleTogglePasswordVisibility}
+                  >
+                    {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             error={Boolean(passwordError)}
             onChange={handlePasswordChange}
             helperText={passwordError}

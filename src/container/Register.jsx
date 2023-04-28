@@ -9,6 +9,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { IconButton, InputAdornment } from "@mui/material";
 import styled from "@emotion/styled";
 import {theme} from "../utills/theme";
 const CssTextField = styled(TextField)({
@@ -24,6 +27,10 @@ export default function Register() {
   const [lNameError, setLnameError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const handleEmailChange = (event) => {
     if (!event.target.value.includes("@")) {
       setEmailError("Please enter a valid email address.");
@@ -167,9 +174,21 @@ export default function Register() {
                 color="secondary"
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="new-password"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleTogglePasswordVisibility}
+                      >
+                        {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 error={Boolean(passwordError)}
                 onChange={handlePasswordChange}
                 helperText={passwordError}
