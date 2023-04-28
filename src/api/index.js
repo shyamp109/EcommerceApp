@@ -1,5 +1,4 @@
-import { method } from 'lodash';
-import client, { METHODS } from '../api/client';
+import client, { METHODS } from './client';
 
 export const api = {
     auth: {
