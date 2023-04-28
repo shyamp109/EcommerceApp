@@ -10,13 +10,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
-// import IconButton from '@mui/icons-material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import styled from "@emotion/styled";
 import {theme} from "../utills/theme";
 import { IconButton, InputAdornment } from "@mui/material";
-import { api } from "../API";
+import { api } from "../api/index.js";
 const CssTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     '&:hover fieldset': {

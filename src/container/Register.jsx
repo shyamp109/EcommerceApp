@@ -14,7 +14,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { IconButton, InputAdornment } from "@mui/material";
 import styled from "@emotion/styled";
 import {theme} from "../utills/theme";
-import { api } from "../API/index.js";
+import { api } from "../api/index.js";
 
 const CssTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
