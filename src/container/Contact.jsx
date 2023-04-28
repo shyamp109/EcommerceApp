@@ -67,11 +67,12 @@ const Contact = () => {
           display: "flex",
           flexDirection: {
             xs: "column",
-            sm: "row",
+            sm: "column",
             md: "row",
             lg: "row",
             marginBottom: "50px",
           },
+          
         }}
       >
         <Grid
@@ -87,6 +88,7 @@ const Contact = () => {
               lg: "row",
               xl: "row",
             },
+            justifyContent:"center",
             marginTop: "20px",
             marginLeft: "0",
             gap: "20px",
@@ -110,11 +112,11 @@ const Contact = () => {
             }}
           >
             <LocationCity fontSize="large" color="secondary" />
-            <Typography textAlign="center" variant="h5">
+            <Typography textAlign="center" sx={{fontSize: { xs: "20px", sm: "25px", md: "25px",lg:"25px " ,xl: "25px" }}} variant="h5">
               Our Main Office
             </Typography>
             <Typography textAlign="center" sx={{ fontSize: "14px" }}>
-              SoHo 94 Broadway St New York, NY 1001
+              SoHo 94 St New York, NY 1001
             </Typography>
           </Grid>
           <Grid
@@ -135,8 +137,8 @@ const Contact = () => {
             }}
           >
             <SmartphoneRounded fontSize="large" color="secondary" />
-            <Typography textAlign="center" variant="h5">
-              PHONE NUMBER
+            <Typography textAlign="center" sx={{fontSize: { xs: "20px", sm: "25px", md: "25px",lg:"25px " ,xl: "25px" }}} variant="h5">
+              Phone Number
             </Typography>
             <Typography textAlign="center" sx={{ fontSize: "14px" }}>
               234-9876-5400 +91-848707567
@@ -160,8 +162,8 @@ const Contact = () => {
             }}
           >
             <FaxRounded fontSize="large" color="secondary" />
-            <Typography textAlign="center" variant="h5">
-              FAX
+            <Typography textAlign="center" sx={{fontSize: { xs: "20px", sm: "25px", md: "25px",lg:"25px " ,xl: "25px" }}} variant="h5">
+              Fax
             </Typography>
             <Typography textAlign="center" sx={{ fontSize: "14px" }}>
               +91-8487075767
@@ -185,7 +187,7 @@ const Contact = () => {
             }}
           >
             <EmailRounded fontSize="large" color="secondary" />
-            <Typography textAlign="center" variant="h5">
+            <Typography textAlign="center" sx={{fontSize: { xs: "20px", sm: "25px", md: "25px",lg:"25px " ,xl: "25px" }}} variant="h5">
               Email
             </Typography>
             <Typography textAlign="center" sx={{ fontSize: "14px" }}>

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import img1 from "../assets/images/slider1.jpg";
-import img2 from "../assets/images/slider2.jpg";
-import img3 from "../assets/images/slider3.jpg";
-import img4 from "../assets/images/slider4.jpg";
+import img1 from "../assets/images/imgcar1.webp";
+import img2 from "../assets/images/imgcar2.webp";
+import img3 from "../assets/images/imgcar3.webp";
+import img4 from "../assets/images/imgcar4.webp";
 import { Swiper,SwiperSlide } from 'swiper/react';
 import "swiper/css";
 import "swiper/css/navigation";
@@ -18,8 +18,7 @@ function SliderImage() {
     <Box sx={{ maxWidth: "100%", flexGrow: 1 }}>
       
       <Swiper
-         
-          height={700}
+          height={500}
           style={{marginTop:"0",marginBotton:"0"}}
           spaceBetween={30}
           centeredSlides={true}

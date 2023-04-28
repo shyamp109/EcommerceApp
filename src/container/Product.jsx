@@ -10,26 +10,27 @@ import {
   Box,
 } from "@mui/material";
 
-import { Shop, ViewAgendaOutlined } from "@mui/icons-material";
-import { NavLink, useLocation } from "react-router-dom";
+import { Shop, ShoppingBag, ViewAgendaOutlined } from "@mui/icons-material";
+import {NavLink, useLocation, useNavigate } from "react-router-dom";
 import CategoryList from "../components/Category";
 import { ValidatePath } from "../utills/helper";
 
 function ProductList() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const location = useLocation();
   const [pathName,setPathName] = useState(false);
-  // const path = location.pathname;
-  // const pathName = ValidatePath(path);
-  // console.log("abc", pathName);
   useEffect(() => {
-    // Fetch data from the API and update the state
-    fetch("https://fakestoreapi.com/products")
+    fetch("https://api.escuelajs.co/api/v1/products")
       .then((response) => response.json())
       .then((data) => setProducts(data))
       .catch((error) => console.error(error));
   }, []);
 
+  // const handleProductClick = (productId) => {
+  //   console.log(productId)
+  //   navigate(`/productDetails/${productId}`);
+  // }
   useEffect(() => {
     setPathName(ValidatePath(location.pathname));
   }, [location]);
@@ -56,7 +57,7 @@ function ProductList() {
 
         <Grid  container spacing={3} sx={{ paddingTop: 5 }}>
           {products.map((product) => (
-            <Grid item xs={12} sm={6} md={4} key={product.id}>
+            <Grid item xs={12} sm={6} md={4} key={product.id} >
               <Card
                 sx={{
                   height: "100%",
@@ -68,10 +69,10 @@ function ProductList() {
               >
                 <CardMedia
                   component="img"
-                  to="/productDetails"
+                  // onClick={()=>handleProductClick(product.id)}
                   p={5}
-                  sx={{ width: "100%", height: "270px", objectFit: "contain" }}
-                  image={product.image}
+                  sx={{ width: "100%", objectFit: "contain" }}
+                  image={product.images}
                   alt={product.title}
                 />
                 <CardContent
@@ -111,26 +112,26 @@ function ProductList() {
                   <Box
                     sx={{
                       display: "flex",
-                      flexDirection: "row",
-                      gap: "20px",
+                      flexDirection:{xs:"column",sm:"column",md:"row",lg:"row",xl:"row"},
+                      gap: "10px",
                       justifyContent: "space-between",
                     }}
                   >
                     <Button
-                      startIcon={<Shop />}
+                      startIcon={<ShoppingBag />}
                       color="secondary"
-                      sx={{ color: "white" }}
+                      sx={{ color: "white",width:{xs:"100%",sm:"100%",md:"50%",lg:"50%",xl:"50%"} }}
                       variant="contained"
                     >
                       Buy Now
                     </Button>
                     <Button
-                      component={NavLink}
-                      to="/productDetails"
                       startIcon={<ViewAgendaOutlined />}
+                      component={NavLink}
+                      to={`/productDetails/${product.id}`}
                       color="secondary"
                       variant="contained"
-                      sx={{ color: "white" }}
+                      sx={{ color: "white",width:{xs:"100%",sm:"100%",md:"50%",lg:"50%",xl:"50%"} }}
                     >
                       View More
                     </Button>
@@ -145,139 +146,4 @@ function ProductList() {
   );
 }
 export default ProductList;
-// {
-//   /* <Box sx={{ display: "flex", flexDirection: "row" }}>
-// <SliderImage />
-// <List
-//   sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-// >
-//   <ListItem alignItems="flex-start">
-//     <ListItemAvatar>
-//       <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-//     </ListItemAvatar>
-//     <ListItemText
-//       primary="Brunch this weekend?"
-//       secondary={
-//         <React.Fragment>
-//           <Typography
-//             sx={{ display: "inline" }}
-//             component="span"
-//             variant="body2"
-//             color="text.primary"
-//           >
-//             Ali Connors
-//           </Typography>
-//           {" — I'll be in your neighborhood doing errands this…"}
-//         </React.Fragment>
-//       }
-//     />
-//   </ListItem>
-//   <Divider variant="inset" component="li" />
-//   <ListItem alignItems="flex-start">
-//     <ListItemAvatar>
-//       <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-//     </ListItemAvatar>
-//     <ListItemText
-//       primary="Summer BBQ"
-//       secondary={
-//         <React.Fragment>
-//           <Typography
-//             sx={{ display: "inline" }}
-//             component="span"
-//             variant="body2"
-//             color="text.primary"
-//           >
-//             to Scott, Alex, Jennifer
-//           </Typography>
-//           {" — Wish I could come, but I'm out of town this…"}
-//         </React.Fragment>
-//       }
-//     />
-//   </ListItem>
-//   <Divider variant="inset" component="li" />
-//   <ListItem alignItems="flex-start">
-//     <ListItemAvatar>
-//       <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-//     </ListItemAvatar>
-//     <ListItemText
-//       primary="Oui Oui"
-//       secondary={
-//         <React.Fragment>
-//           <Typography
-//             sx={{ display: "inline" }}
-//             component="span"
-//             variant="body2"
-//             color="text.primary"
-//           >
-//             Sandra Adams
-//           </Typography>
-//           {" — Do you have Paris recommendations? Have you ever…"}
-//         </React.Fragment>
-//       }
-//     />
-//   </ListItem>
-//   <Divider variant="inset" component="li" />
-//   <ListItem alignItems="flex-start">
-//     <ListItemAvatar>
-//       <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-//     </ListItemAvatar>
-//     <ListItemText
-//       primary="Oui Oui"
-//       secondary={
-//         <React.Fragment>
-//           <Typography
-//             sx={{ display: "inline" }}
-//             component="span"
-//             variant="body2"
-//             color="text.primary"
-//           >
-//             Sandra Adams
-//           </Typography>
-//           {" — Do you have Paris recommendations? Have you ever…"}
-//         </React.Fragment>
-//       }
-//     />
-//   </ListItem>
-//   <Divider variant="inset" component="li" />
-//   <ListItem alignItems="flex-start">
-//     <ListItemAvatar>
-//       <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-//     </ListItemAvatar>
-//     <ListItemText
-//       primary="Oui Oui"
-//       secondary={
-//         <React.Fragment>
-//           <Typography
-//             sx={{ display: "inline" }}
-//             component="span"
-//             variant="body2"
-//             color="text.primary"
-//           >
-//             Sandra Adams
-//           </Typography>
-//           {" — Do you have Paris recommendations? Have you ever…"}
-//         </React.Fragment>
-//       }
-//     />
-//   </ListItem>
-// </List>
-// </Box> */
-// }
-<Container sx={{ marginTop: "30px" }}>
-  <Typography
-    color="otherColor"
-    textAlign="left"
-    sx={{
-      fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-    }}
-    component="h3"
-  >
-    Contact Us
-  </Typography>
-  <Grid container spacing={2}>
-    <Grid item xs={12} sm={8} md={4}></Grid>
-    <Grid item xs={12} sm={8} md={4}></Grid>
-    <Grid item xs={12} md={4}></Grid>
-    <Grid item xs={12} md={4}></Grid>
-  </Grid>
-</Container>;
+
