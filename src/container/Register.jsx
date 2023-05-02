@@ -9,22 +9,25 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IconButton, InputAdornment } from "@mui/material";
 import styled from "@emotion/styled";
-import {theme} from "../utills/theme";
+import { theme } from "../utills/theme";
 import { api } from "../api/index.js";
+import { enqueueSnackbar } from "notistack";
+import Loader from "../components/Loader";
 
 const CssTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    '&:hover fieldset': {
+  "& .MuiOutlinedInput-root": {
+    "&:hover fieldset": {
       borderColor: theme.palette.secondary.main,
     },
   },
 });
 export default function Register() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(false);
   const [fNameError, setFnameError] = React.useState(false);
   const [lNameError, setLnameError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
@@ -65,7 +68,7 @@ export default function Register() {
       setPasswordError(false);
     }
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
@@ -98,25 +101,30 @@ export default function Register() {
       setPasswordError(false);
     }
     if (email && password && firstName && lastName) {
-        const values = {
-          firstName:firstName,
-          lastName:lastName,
-          email:email,
-          password:password,
-        }
-        // setLoading(true);
-        try {
-            const { data } = api.auth.register(values);
-            console.log(data);
-            navigate('/login');
-        } catch (error) {
-            console.log("error occures")
-        } 
+      const values = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      };
+      setIsLoading(true);
+      try {
+        const { data } = await api.auth.register(values);
+        console.log("data", data);
+        enqueueSnackbar("Registration successfully", { variant: "success" });
+        setIsLoading(false);
+        navigate("/login");
+      } catch (error) {
+        console.log("error", error);
+        enqueueSnackbar("Email is already exists", { variant: "error" });
+        setIsLoading(false);
+      }
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <>
+      <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
         sx={{
@@ -189,7 +197,7 @@ export default function Register() {
                 color="secondary"
                 name="password"
                 label="Password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 autoComplete="new-password"
                 InputProps={{
@@ -199,7 +207,11 @@ export default function Register() {
                         aria-label="toggle password visibility"
                         onClick={handleTogglePasswordVisibility}
                       >
-                        {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                        {showPassword ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -235,5 +247,7 @@ export default function Register() {
         </Box>
       </Box>
     </Container>
+     <Loader open={isLoading} />
+    </>
   );
 }

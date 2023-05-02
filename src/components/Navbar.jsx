@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   AppBar,
   Badge,
@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemButton,
+  TextField,
   Toolbar,
   Typography,
   alpha,
@@ -26,48 +27,12 @@ import styled from "@emotion/styled";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { UserContaxt } from "../layout/MainLayout";
 const navItems = ["Home", "Product", "About", "Contact"];
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "secondary",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
 const Header = () => {
+  const { data,handleSearchChange,searchItem,setSearchItem} = useContext(UserContaxt);
+
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -91,14 +56,15 @@ const Header = () => {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  const logout = () =>{
+  
+  const logout = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
     localStorage.clear();
-  }
+  };
   const menuId = "primary-search-account-menu";
   const renderMenu = (
-    <Menu 
+    <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: "top",
@@ -113,9 +79,14 @@ const Header = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem component={NavLink} to="/profile" onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem component={NavLink} to="/login" onClick={()=>logout()}>Logout</MenuItem>
+      {" "}
+      <MenuItem>Hello, {data?.user?.email}</MenuItem>
+      <MenuItem component={NavLink} to="/profile" onClick={handleMenuClose}>
+        Profile
+      </MenuItem>
+      <MenuItem component={NavLink} to="/login" onClick={() => logout()}>
+        Logout
+      </MenuItem>
     </Menu>
   );
 
@@ -138,8 +109,17 @@ const Header = () => {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails"  color="secondary">
-          <Badge components={NavLink} to="/cart" badgeContent={4} color="otherColor">
+        <IconButton
+          size="large"
+          aria-label="show 4 new mails"
+          color="secondary"
+        >
+          <Badge
+            components={NavLink}
+            to="/cart"
+            badgeContent={4}
+            color="otherColor"
+          >
             <ShoppingCart color="secondary" />
           </Badge>
         </IconButton>
@@ -152,7 +132,7 @@ const Header = () => {
           color="secondary"
         >
           <Badge badgeContent={17} color="otherColor">
-            <NotificationsIcon  color="secondary"/>
+            <NotificationsIcon color="secondary" />
           </Badge>
         </IconButton>
         <p>Notifications</p>
@@ -165,9 +145,9 @@ const Header = () => {
           aria-haspopup="true"
           color="secondary"
         >
-          <AccountCircle color="secondary"/>
+          <AccountCircle color="secondary" />
         </IconButton>
-        <p>Profile</p>
+        <p>Hello, {data?.user?.email}</p>
       </MenuItem>
     </Menu>
   );
@@ -199,7 +179,13 @@ const Header = () => {
                 alignItems: "center",
               }}
             >
-              <Button sx={{fontSize:"15px"}} to={item} color="secondary" component={NavLink} key={item}>
+              <Button
+                sx={{ fontSize: "15px" }}
+                to={item}
+                color="secondary"
+                component={NavLink}
+                key={item}
+              >
                 {item}
               </Button>
             </ListItemButton>
@@ -210,7 +196,6 @@ const Header = () => {
   );
   return (
     <>
-
       <Box>
         <AppBar color="secondary" component={"nav"}>
           <Box
@@ -232,20 +217,19 @@ const Header = () => {
               }}
               onClick={handleDrawerToggle}
             >
-              <MenuIcon  />
+              <MenuIcon />
             </IconButton>
 
             <Box sx={{ display: { sm: "none" } }}>
-              <Search >
-                <SearchIconWrapper >
-                  <SearchIcon  />
-                </SearchIconWrapper>
-                <StyledInputBase sx={{border:"1px solid white",borderRadius:"10px"}}
-                  color="primary"
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
+            <TextField
+                variant="outlined"
+                placeholder="Search products..."
+                value={searchItem}
+                onChange={handleSearchChange}
+                size="small"
+                label="search here..."
+                sx={{color:"white"}}
+              />
             </Box>
 
             <Typography
@@ -265,7 +249,7 @@ const Header = () => {
                   component={NavLink}
                   key={item}
                   color="primary"
-                  sx={{fontSize:"15px"}}
+                  sx={{ fontSize: "15px" }}
                 >
                   {item}
                 </Button>
@@ -273,15 +257,15 @@ const Header = () => {
             </Box>
 
             <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon color="priamry" />
-                </SearchIconWrapper>
-                <StyledInputBase sx={{border:"1px solid white",borderRadius:"10px"}}
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
+              <TextField
+                variant="outlined"
+                placeholder="Search products..."
+                value={searchItem}
+                onChange={handleSearchChange}
+                size="small"
+                label="search here..."
+                sx={{color:"white"}}
+              />
             </Box>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <IconButton
@@ -329,8 +313,6 @@ const Header = () => {
               </IconButton>
             </Box>
           </Box>
-         
-          
         </AppBar>
         <Box component="nav">
           <Drawer

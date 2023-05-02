@@ -5,11 +5,11 @@ import {
   FavoriteBorderOutlined,
   ShoppingBagOutlined,
 } from "@mui/icons-material";
-
 import { useLocation } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { ValidatePath } from "../utills/helper";
 import ProductQuantity from "./ProductQuantity";
+import { api } from "../api";
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
   width: "50%",
@@ -26,12 +26,20 @@ function ProductDetails() {
   const { id } = useParams();
   console.log(id);
   const [product, setProduct] = useState(null);
+  const productListData = async () => {
+    const {data} = await api.product.getProductById(id);
+    setProduct(data.product)
+    console.log(data.product);
+  }
 
-  useEffect(() => {
-    fetch(`https://api.escuelajs.co/api/v1/products/${id}`)
-      .then((response) => response.json())
-      .then((data) => setProduct(data));
-  }, [id]);
+  useEffect( () => {
+    productListData();
+  },[]);
+  // useEffect(() => {
+  //   fetch(`https://api.escuelajs.co/api/v1/products/${id}`)
+  //     .then((response) => response.json())
+  //     .then((data) => setProduct(data));
+  // }, [id]);
 
   if (!product) {
     return <div>Loading...</div>;
@@ -66,10 +74,11 @@ function ProductDetails() {
         >
           <Box
             component="img"
-            src={product.images}
+            src={`https://ecommerceserver-4zw1.onrender.com/${product.image}`}
             sx={{
               width: { xs: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" },
               height: "350px",
+              objectFit:"contain",
               borderRadius:"10px",
               marginTop: "15px",
             }}

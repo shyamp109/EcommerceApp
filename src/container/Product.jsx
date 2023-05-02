@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Grid,
   Card,
@@ -14,34 +14,57 @@ import { Shop, ShoppingBag, ViewAgendaOutlined } from "@mui/icons-material";
 import {NavLink, useLocation, useNavigate } from "react-router-dom";
 import CategoryList from "../components/Category";
 import { ValidatePath } from "../utills/helper";
+import { api } from "../api";
+import { UserContaxt } from "../layout/MainLayout";
+import { enqueueSnackbar } from "notistack";
 
 function ProductList() {
+  const { data,products, setProducts,productListRef } = useContext(UserContaxt);
+  console.log(data.user.id);
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
   const location = useLocation();
   const [pathName,setPathName] = useState(false);
-  useEffect(() => {
-    fetch("https://api.escuelajs.co/api/v1/products")
-      .then((response) => response.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error(error));
-  }, []);
+  const productListData = async () => {
+    const {data:productData} = await api.product.get();
+    setProducts(productData.productlist)
+    console.log(productData.productlist);
+  }
 
-  // const handleProductClick = (productId) => {
-  //   console.log(productId)
-  //   navigate(`/productDetails/${productId}`);
-  // }
-  useEffect(() => {
+  useEffect( () => {
     setPathName(ValidatePath(location.pathname));
-  }, [location]);
+    productListData();
+  }, []);
+  const AddToCart =async(product) =>{
+    try{
+      const params = { 
+        user_id:data.user.id,
+        product_id:product,
+      }
+      // console.log("paramns",params);
 
+      const {data:cartData} = await api.cart.add(params);
+      console.log("cart",cartData);
+      if(cartData.status !== 200)
+      {
+        enqueueSnackbar("Add Product to Cart Successfully",{ variant: "success" });
+      }
+      else{
+        enqueueSnackbar("Product is already in cart",{ variant: "error" });
+      }
+    }
+    catch(error)
+    {
+      
+    }
+  }
   return (
     <>
       <Container sx={{ marginBottom: "50px",marinTop:"25px"}} >
         <CategoryList />
         {pathName && (
           <>
-            <Typography
+            <Typography ref={productListRef}
               mt={3}
               color="otherColor"
               textAlign="left"
@@ -67,13 +90,10 @@ function ProductList() {
                   textDecoration: "none",
                 }}
               >
-                <CardMedia
-                  component="img"
-                  // onClick={()=>handleProductClick(product.id)}
-                  p={5}
-                  sx={{ width: "100%", objectFit: "contain" }}
-                  image={product.images}
-                  alt={product.title}
+                <img
+                  style={{width:"100%",height:"200px",objectFit:"contain"}}
+                  src={`https://ecommerceserver-4zw1.onrender.com/${product.image}`}
+                  alt={product.name}
                 />
                 <CardContent
                   sx={{
@@ -102,7 +122,7 @@ function ProductList() {
                       }}
                       variant="h6"
                     >
-                      {product.title}
+                      {product.name}
                     </Typography>
 
                     <Typography color="otherColor" variant="h5" component="h6">
@@ -122,8 +142,9 @@ function ProductList() {
                       color="secondary"
                       sx={{ color: "white",width:{xs:"100%",sm:"100%",md:"50%",lg:"50%",xl:"50%"} }}
                       variant="contained"
+                      onClick={()=>AddToCart(product.id)}
                     >
-                      Buy Now
+                      Add Cart
                     </Button>
                     <Button
                       startIcon={<ViewAgendaOutlined />}

@@ -31,13 +31,36 @@ const ProductQuantity = () => {
   };
 
   return (
-    <Box mt={1} sx={{display:"flex",justifyContent:"flex-start",alignItems:"center"}}>
-      <RemoveSharpIcon color="primary" sx={{backgroundColor:"#d1adcc",borderRadius:"5px",cursor:"pointer"}}  onClick={handleDecreaseQuantity} />
+    <Box
+      mt={1}
+      sx={{
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+      }}
+    >
+      <RemoveSharpIcon
+        color="primary"
+        sx={{
+          backgroundColor: "#d1adcc",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+        onClick={handleDecreaseQuantity}
+      />
       <Typography variant="h6" px={2}>
         {quantity}
       </Typography>
-      
-        <AddSharpIcon color="primary" sx={{backgroundColor:"#d1adcc",borderRadius:"5px",cursor:"pointer"}} onClick={handleIncreaseQuantity} />
+
+      <AddSharpIcon
+        color="primary"
+        sx={{
+          backgroundColor: "#d1adcc",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+        onClick={handleIncreaseQuantity}
+      />
     </Box>
   );
 };

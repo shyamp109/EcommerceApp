@@ -10,25 +10,29 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { NavLink, useNavigate } from "react-router-dom";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import styled from "@emotion/styled";
-import {theme} from "../utills/theme";
+import { theme } from "../utills/theme";
 import { IconButton, InputAdornment } from "@mui/material";
 import { api } from "../api/index.js";
+import { SnackbarProvider, useSnackbar } from "notistack";
+import Loader from "../components/Loader";
 const CssTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    '&:hover fieldset': {
+  "& .MuiOutlinedInput-root": {
+    "&:hover fieldset": {
       borderColor: theme.palette.secondary.main,
     },
   },
 });
 export default function Login() {
-  const navigate= useNavigate();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const handleSubmit =async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
@@ -49,18 +53,22 @@ export default function Login() {
     }
     if (email && password) {
       const values = {
-        email:email,
-        password:password,
-      }
+        email: email,
+        password: password,
+      };
+      setIsLoading(true);
       try {
-        const { data } =await api.auth.login(values);
-        localStorage.setItem("loginToken",data.token)
-        // console.log(data.token)
-        navigate('/');
-       
-    } catch (error) {
-       console.log(error);
-    }
+        const { data } = await api.auth.login(values);
+        const tokenData = JSON.stringify(data);
+        localStorage.setItem("loginToken", tokenData);
+        enqueueSnackbar("Login successfully", { variant: "success" });
+        setIsLoading(false);
+        navigate("/");
+      } catch (error) {
+        enqueueSnackbar("Invalid Credential", { variant: "error" });
+        setIsLoading(false);
+        console.log(error);
+      }
     }
   };
   const handleTogglePasswordVisibility = () => {
@@ -86,108 +94,119 @@ export default function Login() {
     }
   };
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-
-      <Box
-        sx={{
-          padding: 4,
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 3,
-          boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography color="secondary" component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <CssTextField
-            margin="normal"
-            required
-            fullWidth
-            color="secondary"
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            error={Boolean(emailError)}
-            onChange={handleEmailChange}
-            helperText={emailError}
-          />
-          <CssTextField
-            color="secondary"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            autoComplete="current-password"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleTogglePasswordVisibility}
-                  >
-                    {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            error={Boolean(passwordError)}
-            onChange={handlePasswordChange}
-            helperText={passwordError}
-          />
-          <Grid
-            item
-            xs
+    <>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
             sx={{
-              textAlign: "right",
+              padding: 4,
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 3,
+              boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
             }}
           >
-            <Link
-              color="secondary"
-              href="#"
-              variant="body2"
-              sx={{ textDecoration: "none" }}
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography color="secondary" component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
             >
-              Forgot password?
-            </Link>
-          </Grid>
-          <Button
-            color="secondary"
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2, color: "white" }}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item sx={{ textAlign: "center" }}>
-              <Typography
-                component={NavLink}
-                to="/register"
+              <CssTextField
+                margin="normal"
+                required
+                fullWidth
                 color="secondary"
-                variant="body2"
-                sx={{ textDecoration: "none" }}
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                error={Boolean(emailError)}
+                onChange={handleEmailChange}
+                helperText={emailError}
+              />
+              <CssTextField
+                color="secondary"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                id="password"
+                autoComplete="current-password"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleTogglePasswordVisibility}
+                      >
+                        {showPassword ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                error={Boolean(passwordError)}
+                onChange={handlePasswordChange}
+                helperText={passwordError}
+              />
+              <Grid
+                item
+                xs
+                sx={{
+                  textAlign: "right",
+                }}
               >
-                {"Don't have an account? Sign Up"}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    </Container>
+                <Link
+                  color="secondary"
+                  href="#"
+                  variant="body2"
+                  sx={{ textDecoration: "none" }}
+                >
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Button
+                color="secondary"
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, color: "white" }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item sx={{ textAlign: "center" }}>
+                  <Typography
+                    component={NavLink}
+                    to="/register"
+                    color="secondary"
+                    variant="body2"
+                    sx={{ textDecoration: "none" }}
+                  >
+                    {"Don't have an account? Sign Up"}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Container>
+      <Loader open={isLoading} />
+    </>
   );
 }
