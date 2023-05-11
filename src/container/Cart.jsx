@@ -17,14 +17,15 @@ import {
   RemoveCircle,
   RemoveShoppingCart,
   Shop2Rounded,
+  ShoppingBagSharp,
 } from "@mui/icons-material";
 
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ValidatePath } from "../utills/helper";
 import { api } from "../api";
 import { UserContaxt } from "../layout/MainLayout";
 import { enqueueSnackbar } from "notistack";
-import Loader from "./Loader";
+import Loader from "../components/Loader";
 
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
@@ -43,6 +44,7 @@ function Cart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
   const location = useLocation();
   const path = location.pathname;
   const pathName = ValidatePath({ path });
@@ -64,15 +66,16 @@ function Cart() {
   }, []);
   useEffect(() => {
     let subTotal = cart.reduce((acc, item) => {
-      return acc + item.Product.price * item.qty;
+      return acc + item?.Product?.price * item.qty;
     }, 0);
     setSubtotal(subTotal);
     setTotal(subTotal + 100);
   }, [cart]);
   const decrementQty = (id) => {
+    var newQty;
     const newCart = cart.map((item) => {
       if (item.id === id) {
-        const newQty = parseInt(item.qty) - 1;
+        newQty = parseInt(item.qty) - 1;
         return {
           ...item,
           qty: newQty >= 1 ? newQty : 1,
@@ -81,12 +84,14 @@ function Cart() {
       return item;
     });
     setCart(newCart);
+    updateCart(id, newQty);
   };
 
   const incrementQty = (id) => {
+    var newQty;
     const newCart = cart.map((item) => {
       if (item.id === id) {
-        const newQty = parseInt(item.qty) + 1;
+        newQty = parseInt(item.qty) + 1;
         return {
           ...item,
           qty: newQty >= 1 ? newQty : 1,
@@ -95,6 +100,23 @@ function Cart() {
       return item;
     });
     setCart(newCart);
+    updateCart(id, newQty);
+  };
+
+  const updateCart = async (id, newQty) => {
+    console.log("qty0", newQty);
+    const params = {
+      id: id,
+      qty: {
+        qty: newQty,
+      },
+    };
+    console.log(params);
+    try {
+      const { data: updatedCart } = await api.cart.update(params);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleRemoveFromCart = async (item) => {
@@ -104,10 +126,32 @@ function Cart() {
     };
     try {
       const { data: updatedCart } = await api.cart.remove(params);
+
       enqueueSnackbar("Product Removed from Cart", { variant: "error" });
       getCartData();
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleOrderPlace = async () => {
+    const pdata = [];
+    cart.forEach((item) => {
+      const productId = item?.Product?.id;
+      pdata.push(productId);
+    });
+    const values = {
+      user_id: data.user.id,
+      productlist: pdata,
+    };
+    try {
+      const { data: orderData } = await api.order.add(values);
+      enqueueSnackbar("Order Placed successfully", { variant: "success" });
+      navigate("/order");
+      console.log(orderData);
+    } catch (error) {
+      enqueueSnackbar("Can not placed order", { variant: "success" });
+      console.log(error);
     }
   };
   return (
@@ -143,7 +187,7 @@ function Cart() {
             width: "full",
           }}
         >
-          {cart.length > 0  ? (
+          {cart.length > 0 ? (
             <>
               <Box
                 sx={{
@@ -162,7 +206,7 @@ function Cart() {
                     <>
                       <ListItem
                         sx={{
-                          padding: "10px",
+                          padding: { xs: "20px", sm: "20px", md: "10px" },
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
@@ -175,12 +219,12 @@ function Cart() {
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             alignItems: "center",
-                            gap: "10px",
+                            gap: { xs: "20px", sm: "20px", md: "10px" },
                             width: "220px",
                           }}
                         >
                           <img
-                            src={`https://ecommerceserver-4zw1.onrender.com/${cart.Product.image}`}
+                            src={`https://ecommerceserver-4zw1.onrender.com/${cart?.Product?.image}`}
                             alt="img"
                             width="80px"
                             height="80px"
@@ -196,7 +240,7 @@ function Cart() {
                               fontWeight: 500,
                             }}
                           >
-                            {cart.Product.name}
+                            {cart?.Product?.name}
                           </Typography>
                         </Box>
                         <Box
@@ -205,14 +249,23 @@ function Cart() {
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             alignItems: "center",
-                            gap: "10px",
+                            paddingLeft: {
+                              xs: "20px",
+                              sm: "20px",
+                              md: "10px",
+                            },
+                            gap: { xs: "20px", sm: "20px", md: "10px" },
                           }}
                         >
                           <Button
                             size="small"
                             variant="contained"
                             color="secondary"
-                            sx={{ color: "white" }}
+                            sx={{
+                              color: "white",
+                              minWidth: "35px",
+                             
+                            }}
                             onClick={() => decrementQty(cart.id)}
                           >
                             -
@@ -225,6 +278,7 @@ function Cart() {
                                 md: "20px",
                                 xl: "20px",
                               },
+
                               fontWeight: 500,
                             }}
                           >
@@ -234,7 +288,7 @@ function Cart() {
                             size="small"
                             variant="contained"
                             color="secondary"
-                            sx={{ color: "white", width: "15px" }}
+                            style={{ color: "white", minWidth: "35px" }}
                             onClick={() => incrementQty(cart.id)}
                           >
                             +
@@ -248,11 +302,12 @@ function Cart() {
                               md: "20px",
                               xl: "20px",
                             },
+                            paddingLeft: { xs: "20px", sm: "20px", md: "10px" },
                             fontWeight: 500,
                             width: "100px",
                           }}
                         >
-                          ${cart.Product.price}
+                          ${cart?.Product?.price}
                         </Typography>
                         <Typography
                           sx={{
@@ -262,15 +317,16 @@ function Cart() {
                               md: "20px",
                               xl: "20px",
                             },
+                            paddingLeft: { xs: "20px", sm: "20px", md: "10px" },
                             fontWeight: 500,
                           }}
                         >
-                          ${cart.Product.price * cart.qty}
+                          ${cart?.Product?.price * cart.qty}
                         </Typography>
                         <Box>
                           <Button
                             onClick={() =>
-                              handleRemoveFromCart(cart.Product.id)
+                              handleRemoveFromCart(cart?.Product?.id)
                             }
                           >
                             <DeleteForeverSharp
@@ -280,50 +336,10 @@ function Cart() {
                           </Button>
                         </Box>
                       </ListItem>
-                      <Divider />
+                      <Divider variant="fullWidth"  />
                     </>
                   ))}
                 </List>
-                <Box
-                  textAlign="right"
-                  mt={1}
-                  mb={1}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    flexDirection: "row",
-                    gap: "15px",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: {
-                        xs: "16px",
-                        sm: "20px",
-                        md: "20px",
-                        xl: "20px",
-                      },
-                      fontWeight: 500,
-                    }}
-                  >
-                    Subtotal :
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: {
-                        xs: "16px",
-                        sm: "20px",
-                        md: "20px",
-                        xl: "20px",
-                      },
-                      fontWeight: 500,
-                    }}
-                  >
-                    ${subtotal}
-                  </Typography>
-                </Box>
-                <Divider />
                 <Box
                   textAlign="right"
                   mt={2}
@@ -381,20 +397,7 @@ function Cart() {
                         fontWeight: 500,
                       }}
                     >
-                      Total :
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: {
-                          xs: "20px",
-                          sm: "20px",
-                          md: "20px",
-                          xl: "20px",
-                        },
-                        fontWeight: 500,
-                      }}
-                    >
-                      ${total}
+                      SubTotal : ${subtotal}
                     </Typography>
                   </Box>
                 </Box>
@@ -404,68 +407,144 @@ function Cart() {
                   display: "flex",
                   flexDirection: "column",
                   gap: "20px",
-                  width: "full",
+                  width: "auto",
                 }}
               >
                 <Box
                   sx={{
                     borderRadius: "10px",
-                    padding: "25px",
+                    padding: "20px",
                     boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
                   }}
                 >
                   <Typography sx={{ fontSize: "25px", fontWeight: 500 }}>
-                    Your Information
+                    Price Details
                   </Typography>
                   <Divider />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    color="secondary"
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                  />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    color="secondary"
-                    id="mobile"
-                    label="Mobile number"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    borderRadius: "10px",
-                    padding: "25px",
-                    boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "25px", fontWeight: 500 }}>
-                    Payment Option
-                  </Typography>
+                  <Box
+                    mt={2}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      flexDirection: "row",
+                      gap: "15px",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: {
+                          xs: "18px",
+                          sm: "18px",
+                          md: "18px",
+                          xl: "18px",
+                        },
+                        fontWeight: 500,
+                      }}
+                    >
+                      SubTotal :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: {
+                          xs: "18px",
+                          sm: "18px",
+                          md: "18px",
+                          xl: "18px",
+                        },
+                        fontWeight: 500,
+                      }}
+                    >
+                      ${subtotal}
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    mt={2}
+                    mb={1}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      flexDirection: "row",
+                      gap: "15px",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: {
+                          xs: "18px",
+                          sm: "18px",
+                          md: "18px",
+                          xl: "18px",
+                        },
+                        fontWeight: 500,
+                      }}
+                    >
+                      Shipping:
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: {
+                          xs: "18px",
+                          sm: "18px",
+                          md: "18px",
+                          xl: "18px",
+                        },
+                        fontWeight: 500,
+                      }}
+                    >
+                      $100
+                    </Typography>
+                  </Box>
                   <Divider />
-                  <img
-                    src={payment}
-                    alt="img"
-                    style={{ backgroundColor: "white", marginTop: "15px" }}
-                    width="250px"
-                    height="100px"
-                  />
+                  <Box
+                    mt={2}
+                    mb={2}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      flexDirection: "row",
+                      gap: "15px",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: {
+                          xs: "18px",
+                          sm: "18px",
+                          md: "18px",
+                          xl: "18px",
+                        },
+                        fontWeight: 600,
+                      }}
+                    >
+                      FinalTotal :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: {
+                          xs: "18px",
+                          sm: "18px",
+                          md: "18px",
+                          xl: "18px",
+                        },
+                        fontWeight: 600,
+                      }}
+                    >
+                      ${total}
+                    </Typography>
+                  </Box>
+                  <Divider />
                   <Button
+                    onClick={() => handleOrderPlace()}
                     variant="contained"
                     color="secondary"
-                    sx={{ color: "white", width: "100%", marginTop: "15px" }}
-                    startIcon={<Shop2Rounded />}
+                    sx={{ color: "white", marginTop: "10px", width: "100%" }}
+                    startIcon={<ShoppingBagSharp />}
                   >
-                    Buy Now
+                    Place Order
                   </Button>
                 </Box>
               </Box>

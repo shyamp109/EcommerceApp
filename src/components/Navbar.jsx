@@ -28,12 +28,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { UserContaxt } from "../layout/MainLayout";
+import SearchComponents from "./SearchComponents";
 const navItems = ["Home", "Product", "About", "Contact"];
 const Header = () => {
-  const { data,handleSearchChange,searchItem,setSearchItem} = useContext(UserContaxt);
-
+  const { data, handleSearchChange, searchItem, setSearchItem,suggestions } =
+    useContext(UserContaxt);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [search,setSearch]= useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -56,7 +58,9 @@ const Header = () => {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  
+  const handleSerachBarDailog = () =>{
+    setSearch(true);
+  }
   const logout = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
@@ -221,14 +225,14 @@ const Header = () => {
             </IconButton>
 
             <Box sx={{ display: { sm: "none" } }}>
-            <TextField
+              <TextField
                 variant="outlined"
                 placeholder="Search products..."
                 value={searchItem}
                 onChange={handleSearchChange}
                 size="small"
                 label="search here..."
-                sx={{color:"white"}}
+                sx={{ color: "white" }}
               />
             </Box>
 
@@ -256,7 +260,7 @@ const Header = () => {
               ))}
             </Box>
 
-            <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
+            <Box sx={{ display: { xs: "none", sm: "none", md: "block" },flexDirection:"column" }}>
               <TextField
                 variant="outlined"
                 placeholder="Search products..."
@@ -264,9 +268,13 @@ const Header = () => {
                 onChange={handleSearchChange}
                 size="small"
                 label="search here..."
-                sx={{color:"white"}}
+                sx={{ color: "white" }}
+                onFocus={()=>handleSerachBarDailog()}
+                // onBlur={()=>setSearch(false)}
               />
+              {search?<SearchComponents setSearch={setSearch} />:null}
             </Box>
+            
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <IconButton
                 size="large"
@@ -335,6 +343,7 @@ const Header = () => {
           <Toolbar />
         </Box>
       </Box>
+      
       {renderMobileMenu}
       {renderMenu}
     </>

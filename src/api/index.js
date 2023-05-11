@@ -2,7 +2,7 @@ import client, { METHODS } from "./client";
 const data = localStorage.getItem("loginToken") || null;
 const tokenObj = JSON.parse(data);
 const token = tokenObj?.token;
-console.log("jgshd", tokenObj?.token);
+console.log("jgshd", tokenObj);
 export const api = {
   auth: {
     login: (params) =>
@@ -124,7 +124,14 @@ export const api = {
         url: `/api/product/addtocart/`,
         data: params,
         method: METHODS.POST,
-      headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    update: (params) =>
+      client({
+        url: `api/product/updatecart/${params.id}`,
+        data: params.qty,
+        method: METHODS.PUT,
+        headers: { Authorization: `Bearer ${token}` },
       }),
     remove: (params) =>
       client({
@@ -143,7 +150,7 @@ export const api = {
         url: `/api/product/getcartproduct/${data}`,
         method: METHODS.GET,
         ...data,
-       headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       }),
   },
   restaurants: {
@@ -208,6 +215,13 @@ export const api = {
       }),
   },
   order: {
+    add: (params) =>
+      client({
+        url: `/api/product/create_order/`,
+        data: params,
+        method: METHODS.POST,
+        headers: { Authorization: `Bearer ${token}` },
+      }),
     get: () =>
       client({
         url: `/order/getMyOrder`,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CardContent, Container, Button, Box, Typography } from "@mui/material";
 import styled from "@emotion/styled";
 import {
@@ -8,8 +8,10 @@ import {
 import { useLocation } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { ValidatePath } from "../utills/helper";
-import ProductQuantity from "./ProductQuantity";
+import ProductQuantity from "../components/ProductQuantity";
 import { api } from "../api";
+import { UserContaxt } from "../layout/MainLayout";
+import { enqueueSnackbar } from "notistack";
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
   width: "50%",
@@ -20,6 +22,14 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
   },
 }));
 function ProductDetails() {
+  const {
+    data,
+    products,
+    setProducts,
+    productListRef,
+    noProductsFound,
+    setNoProductsFound,
+  } = useContext(UserContaxt);
   const location = useLocation();
   const path = location.pathname;
   const pathName = ValidatePath({ path });
@@ -44,7 +54,25 @@ function ProductDetails() {
   if (!product) {
     return <div>Loading...</div>;
   }
+  const AddToCart = async (product) => {
+    try {
+      const params = {
+        user_id: data.user.id,
+        product_id: product,
+      };
+      // console.log("paramns",params);
 
+      const { data: cartData } = await api.cart.add(params);
+      console.log("cart", cartData);
+      if (cartData.status !== 200) {
+        enqueueSnackbar("Add Product to Cart Successfully", {
+          variant: "success",
+        });
+      } else {
+        enqueueSnackbar("Product is already in cart", { variant: "error" });
+      }
+    } catch (error) {}
+  };
   // console.log(product)
   return (
     <>
@@ -109,7 +137,7 @@ function ProductDetails() {
                   fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
                 }}
               >
-                {product.title}
+                {product.name}
               </Typography>
               <Typography color="otherColor" variant="body" sx={{fontSize: { xs: "12px", sm: "12px", md: "15px", xl: "15px" }}}>
               orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
@@ -130,6 +158,7 @@ function ProductDetails() {
                   color="secondary"
                   variant="contained"
                   sx={{ color: "white", width: "100%" }}
+                  onClick={() => AddToCart(product.id)}
                 >
                   Cart
                 </Button>

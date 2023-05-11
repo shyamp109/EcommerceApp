@@ -76,6 +76,7 @@ export default function Register() {
     const lastName = data.get("lastName");
     const email = data.get("email");
     const password = data.get("password");
+    const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (!firstName) {
       setFnameError("First Name is required.");
     } else {
@@ -88,7 +89,7 @@ export default function Register() {
     }
     if (!email) {
       setEmailError("Email is required.");
-    } else if (!email.includes("@")) {
+    } else if (pattern.test(email)) {
       setEmailError("Please enter a valid email address.");
     } else {
       setEmailError(false);

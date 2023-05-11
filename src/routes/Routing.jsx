@@ -2,15 +2,16 @@ import React, { createContext, useEffect, useState } from "react";
 import Login from "../container/Login";
 import Register from "../container/Register";
 import About from "../container/About";
-import Cart from "../components/Cart";
+import Cart from "../container/Cart";
 import CategoryList from "../components/Category";
 import Product from "../container/Product";
-import ProductDetails from "../components/ProductDetails";
-import Profile from "../components/Profile";
+import ProductDetails from "../container/ProductDetails";
+import Profile from "../container/Profile";
 import Contact from "../container/Contact";
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
 import Home from "../container/Home";
+import Order from "../container/Order";
 export const UserContext = createContext();
 const Routing = () => {
   const [token, setToken] = useState(null);
@@ -30,6 +31,7 @@ const Routing = () => {
             <Route path="/productDetails/:id" element={<ProductDetails />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/order" element={<Order />} />
             <Route path="/category" element={<CategoryList />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
