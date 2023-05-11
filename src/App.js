@@ -9,7 +9,7 @@ export const UserContext = createContext();
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <SnackbarProvider anchorOrigin={{vertical:"top",horizontal:"right"}} maxSnack={3}>
+      <SnackbarProvider anchorOrigin={{vertical:"top",horizontal:"right"}} maxSnack={2}>
         <Routing />
       </SnackbarProvider>
     </ThemeProvider>

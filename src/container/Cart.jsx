@@ -126,7 +126,6 @@ function Cart() {
     };
     try {
       const { data: updatedCart } = await api.cart.remove(params);
-
       enqueueSnackbar("Product Removed from Cart", { variant: "error" });
       getCartData();
     } catch (error) {
@@ -195,6 +194,7 @@ function Cart() {
                   width: { sx: "full", sm: "full", md: "100%" },
                   boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
                   borderRadius: "10px",
+                  
                 }}
               >
                 <Typography sx={{ fontSize: "25px", fontWeight: 500 }}>
@@ -206,7 +206,7 @@ function Cart() {
                     <>
                       <ListItem
                         sx={{
-                          padding: { xs: "20px", sm: "20px", md: "10px" },
+                          padding: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
@@ -219,7 +219,7 @@ function Cart() {
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             alignItems: "center",
-                            gap: { xs: "20px", sm: "20px", md: "10px" },
+                            gap: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
                             width: "220px",
                           }}
                         >
@@ -253,8 +253,9 @@ function Cart() {
                               xs: "20px",
                               sm: "20px",
                               md: "10px",
+                              lg:"10px",xl:"10px"
                             },
-                            gap: { xs: "20px", sm: "20px", md: "10px" },
+                            gap: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
                           }}
                         >
                           <Button
@@ -302,7 +303,7 @@ function Cart() {
                               md: "20px",
                               xl: "20px",
                             },
-                            paddingLeft: { xs: "20px", sm: "20px", md: "10px" },
+                            paddingLeft: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
                             fontWeight: 500,
                             width: "100px",
                           }}
@@ -407,7 +408,7 @@ function Cart() {
                   display: "flex",
                   flexDirection: "column",
                   gap: "20px",
-                  width: "auto",
+                 
                 }}
               >
                 <Box
@@ -520,7 +521,7 @@ function Cart() {
                         fontWeight: 600,
                       }}
                     >
-                      FinalTotal :
+                      FinalTotal:
                     </Typography>
                     <Typography
                       sx={{
@@ -553,7 +554,7 @@ function Cart() {
             <Box
               sx={{
                 padding: "25px",
-                width: { sx: "full", sm: "full", md: "100%" },
+                width: "full",
                 height: "11vh",
                 boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
                 borderRadius: "10px",
