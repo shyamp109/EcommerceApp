@@ -54,7 +54,7 @@ function ProductList() {
       };
       setIsLoading(true);   
       const { data: cartData } = await api.cart.add(params);
-      dispatch(fetchCartData())
+      dispatch(fetchCartData(user?.user.id))
       setIsLoading(false);
       if (cartData.status !== 200) {
         enqueueSnackbar("Add Product to Cart Successfully", {
@@ -71,13 +71,13 @@ function ProductList() {
     }
   };
 
-  const handleProductItemClick = (productId) => {
-    setIsLoading(true);
-    console.log("product id", productId);
-    dispatch(fetchProductDetail(productId));
-    setIsLoading(false);
-    navigate("ProductDetails", { productId });
-  };
+  // const handleProductItemClick = (productId) => {
+  //   setIsLoading(true);
+  //   console.log("product id", productId);
+  //   dispatch(fetchProductDetail(productId));
+  //   setIsLoading(false);
+  //   navigate("ProductDetails", { productId });
+  // };
   return (
     <>
       <Container sx={{ marginBottom: "50px", marinTop: "25px" }}>

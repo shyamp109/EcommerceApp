@@ -5,7 +5,6 @@ export const fetchCartData = createAsyncThunk(
   async (userId) => {
     try { 
       const responce = await api.cart.get(userId);
-      console.log("cart", responce);
       return responce.data;
     } catch (error) {
       console.log(error);

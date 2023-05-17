@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   AppBar,
   Badge,
@@ -29,11 +29,12 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { UserContaxt } from "../layout/MainLayout";
 import SearchComponents from "./SearchComponents";
+import { useSelector } from "react-redux";
 const navItems = ["Home", "Product", "About", "Contact"];
 const Header = () => {
   const { user, handleSearchChange, searchItem, setSearchItem,suggestions } =
     useContext(UserContaxt);
-
+  const {cart} = useSelector((state) => state.cartSlice);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search,setSearch]= useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -66,6 +67,9 @@ const Header = () => {
     handleMobileMenuClose();
     localStorage.clear();
   };
+  useEffect(()=>{
+
+  },[cart])
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -121,7 +125,7 @@ const Header = () => {
           <Badge
             components={NavLink}
             to="/cart"
-            badgeContent={4}
+            badgeContent={cart?.usercart?.length}
             color="otherColor"
           >
             <ShoppingCart color="secondary" />
@@ -283,7 +287,7 @@ const Header = () => {
                 component={NavLink}
                 to="/cart"
               >
-                <Badge badgeContent={4} color="otherColor">
+                <Badge badgeContent={cart?.usercart?.length} color="otherColor">
                   <ShoppingCart />
                 </Badge>
               </IconButton>

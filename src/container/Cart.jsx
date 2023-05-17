@@ -41,14 +41,11 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
   },
 }));
 function Cart() {
-
   const [isLoading, setIsLoading] = React.useState(false);
-
   const {cart} = useSelector((state) => state.cartSlice);
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
   const {user} = useSelector((state) => state.auth);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -106,7 +103,6 @@ function Cart() {
         qty: newQty,
       },
     };
-    console.log(params);
     setIsLoading(true);
     try {
       const response = await api.cart.update(params);

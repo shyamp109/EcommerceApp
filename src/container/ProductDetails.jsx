@@ -14,6 +14,8 @@ import { UserContaxt } from "../layout/MainLayout";
 import { enqueueSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductDetail } from "../redux/reducers/productDetailsSlice";
+import { fetchCartData } from "../redux/reducers/cartSlice";
+import Loader from "../components/Loader";
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
   width: "50%",
@@ -28,6 +30,7 @@ function ProductDetails() {
   const path = location.pathname;
   const pathName = ValidatePath({ path });
   const { id } = useParams();
+  const [isLoading, setIsLoading] = React.useState(false);
   const { user } = useSelector((state) => state.auth);
   const product = useSelector(state => state.productDetailsSlice);
   const dispatch = useDispatch();
@@ -43,19 +46,25 @@ function ProductDetails() {
   const AddToCart = async (product) => {
     try {
       const params = {
-        user_id: user?.user?.id,
+        user_id: user?.user.id,
         product_id: product,
       };
+      setIsLoading(true);   
       const { data: cartData } = await api.cart.add(params);
+      dispatch(fetchCartData(user?.user.id))
+      setIsLoading(false);
       if (cartData.status !== 200) {
         enqueueSnackbar("Add Product to Cart Successfully", {
           variant: "success",
         });
+        setIsLoading(false);
       } else {
         enqueueSnackbar("Product is already in cart", { variant: "error" });
+        setIsLoading(false);
       }
     } catch (error) {
-      enqueueSnackbar("Something went wrong", { variant: "error" });
+      enqueueSnackbar(error, { variant: "error" });
+      setIsLoading(false);
     }
   };
   return (
@@ -159,6 +168,7 @@ function ProductDetails() {
             </Box>
           </CardContent>
         </Box>
+        <Loader open={isLoading} />
       </Container>
     </>
   );
