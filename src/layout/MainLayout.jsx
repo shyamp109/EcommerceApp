@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumbs";
 import { api } from "../api";
 import { enqueueSnackbar } from "notistack";
-import SearchComponents from "../components/SearchComponents";
+import { useSelector } from "react-redux";
 export const UserContaxt = createContext();
 const MainLayout = () => {
   var location = useLocation();
@@ -14,8 +14,8 @@ const MainLayout = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [products, setProducts] = useState([]);
   const [noProductsFound,setNoProductsFound] = useState("");
-  const token = localStorage.getItem("loginToken");
-  const data = JSON.parse(token);
+  const {user} = useSelector(state => state.auth);
+  console.log(user);
   const handleSearchChange = async (event) => {
     try {
       setSearchItem(event.target.value);
@@ -38,17 +38,17 @@ const MainLayout = () => {
     }
   };
   const NavigatePerUser = () => {
-    if (token) {
-      return <Outlet />;
-    } else {
+    if (user.token === null) {
       return <Navigate to={"/login"} />;
-    }
+    } else {
+      return <Outlet />;
+    } 
   };
   return (
     <div>
       <UserContaxt.Provider
         value={{
-          data,
+          user,
           handleSearchChange,
           searchItem,
           setSearchItem,

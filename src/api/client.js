@@ -85,8 +85,9 @@ request.interceptors.response.use(
 if (localStorage.getItem('persist:root')) {
     const userLocal = JSON.parse(localStorage.getItem('persist:root')).auth;
     if (userLocal) {
-        const userData = JSON.parse(userLocal).user;
-        request.defaults.headers.Authorization = `Bearer ${userData?.token}`;
+        const userData = JSON.parse(userLocal);
+        console.log(userData.user.token);
+        request.defaults.headers.Authorization = `Bearer ${userData?.user?.token}`;
     }
 }
 export function setHeaderToken(token) {

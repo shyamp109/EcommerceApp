@@ -26,6 +26,8 @@ import { api } from "../api";
 import { UserContaxt } from "../layout/MainLayout";
 import { enqueueSnackbar } from "notistack";
 import Loader from "../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCartData } from "../redux/reducers/cartSlice";
 
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
@@ -39,33 +41,27 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
   },
 }));
 function Cart() {
-  const { data } = useContext(UserContaxt);
+  // const { user } = useContext(UserContaxt);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [cart, setCart] = useState([]);
+  // const [cart, setCart] = useState([]);
+  const {cart} = useSelector((state) => state.cartSlice);
+  console.log(cart)
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
+  const {user} = useSelector((state) => state.auth);
+  // console.log(data.user.id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname;
   const pathName = ValidatePath({ path });
-  const getCartData = async () => {
+  useEffect(() => {
     setIsLoading(true);
-    try {
-      const params = data.user.id;
-      const { data: cartData } = await api.cart.get(params);
-      // console.log(cartData.usercart);
-      setCart(cartData.usercart);
-      setIsLoading(false);
-    } catch (error) {
-      enqueueSnackbar("Something went wrong", { variant: "error" });
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    getCartData();
+    dispatch(fetchCartData(user?.user?.id)).then(() => setIsLoading(false));
   }, []);
+
   useEffect(() => {
-    let subTotal = cart.reduce((acc, item) => {
+    let subTotal = cart?.usercart?.reduce((acc, item) => {
       return acc + item?.Product?.price * item.qty;
     }, 0);
     setSubtotal(subTotal);
@@ -73,7 +69,7 @@ function Cart() {
   }, [cart]);
   const decrementQty = (id) => {
     var newQty;
-    const newCart = cart.map((item) => {
+    const newCart = cart.usercart.map((item) => {
       if (item.id === id) {
         newQty = parseInt(item.qty) - 1;
         return {
@@ -83,13 +79,13 @@ function Cart() {
       }
       return item;
     });
-    setCart(newCart);
+    dispatch(fetchCartData(user?.user?.id));
     updateCart(id, newQty);
   };
 
   const incrementQty = (id) => {
     var newQty;
-    const newCart = cart.map((item) => {
+    const newCart = cart.usercart.map((item) => {
       if (item.id === id) {
         newQty = parseInt(item.qty) + 1;
         return {
@@ -99,7 +95,7 @@ function Cart() {
       }
       return item;
     });
-    setCart(newCart);
+    dispatch(fetchCartData(user?.user?.id));
     updateCart(id, newQty);
   };
 
@@ -112,24 +108,34 @@ function Cart() {
       },
     };
     console.log(params);
+    setIsLoading(true);
     try {
-      const { data: updatedCart } = await api.cart.update(params);
+      const response = await api.cart.update(params);
+      enqueueSnackbar("Product Quantity Updated", { variant: "success" });
+      dispatch(fetchCartData(user?.user?.id));
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      enqueueSnackbar("Something Went Worng", { variant: "error" });
+      setIsLoading(false);
     }
   };
-
   const handleRemoveFromCart = async (item) => {
     const params = {
-      user_id: data.user.id,
+      user_id: user?.user?.id,
       product_id: item,
     };
+    setIsLoading(true);
     try {
       const { data: updatedCart } = await api.cart.remove(params);
-      enqueueSnackbar("Product Removed from Cart", { variant: "error" });
-      getCartData();
+      dispatch(fetchCartData(user?.user?.id));
+      enqueueSnackbar("Product Removed From Cart !!", { variant: "success" });
+      // showError('Product Removed from Cart!');
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+      setIsLoading(false);
     }
   };
 
@@ -140,7 +146,7 @@ function Cart() {
       pdata.push(productId);
     });
     const values = {
-      user_id: data.user.id,
+      user_id: user?.user?.id,
       productlist: pdata,
     };
     try {
@@ -186,15 +192,14 @@ function Cart() {
             width: "full",
           }}
         >
-          {cart.length > 0 ? (
+          {cart?.usercart?.length > 0 ? (
             <>
               <Box
                 sx={{
                   padding: "25px",
-                  width: { sx: "full", sm: "full", md: "100%" },
+                  width: { xs: "full", sm: "full", md: "100%" },
                   boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
                   borderRadius: "10px",
-                  
                 }}
               >
                 <Typography sx={{ fontSize: "25px", fontWeight: 500 }}>
@@ -202,11 +207,17 @@ function Cart() {
                 </Typography>
                 <Divider />
                 <List sx={{ overflowX: "scroll" }}>
-                  {cart?.map((cart) => (
+                  {cart?.usercart?.map((cart) => (
                     <>
                       <ListItem
                         sx={{
-                          padding: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
+                          padding: {
+                            xs: "20px",
+                            sm: "20px",
+                            md: "10px",
+                            lg: "10px",
+                            xl: "10px",
+                          },
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
@@ -219,7 +230,13 @@ function Cart() {
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             alignItems: "center",
-                            gap: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
+                            gap: {
+                              xs: "20px",
+                              sm: "20px",
+                              md: "10px",
+                              lg: "10px",
+                              xl: "10px",
+                            },
                             width: "220px",
                           }}
                         >
@@ -253,9 +270,16 @@ function Cart() {
                               xs: "20px",
                               sm: "20px",
                               md: "10px",
-                              lg:"10px",xl:"10px"
+                              lg: "10px",
+                              xl: "10px",
                             },
-                            gap: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
+                            gap: {
+                              xs: "20px",
+                              sm: "20px",
+                              md: "10px",
+                              lg: "10px",
+                              xl: "10px",
+                            },
                           }}
                         >
                           <Button
@@ -265,7 +289,6 @@ function Cart() {
                             sx={{
                               color: "white",
                               minWidth: "35px",
-                             
                             }}
                             onClick={() => decrementQty(cart.id)}
                           >
@@ -303,7 +326,13 @@ function Cart() {
                               md: "20px",
                               xl: "20px",
                             },
-                            paddingLeft: { xs: "20px", sm: "20px", md: "10px",lg:"10px",xl:"10px" },
+                            paddingLeft: {
+                              xs: "20px",
+                              sm: "20px",
+                              md: "10px",
+                              lg: "10px",
+                              xl: "10px",
+                            },
                             fontWeight: 500,
                             width: "100px",
                           }}
@@ -337,7 +366,7 @@ function Cart() {
                           </Button>
                         </Box>
                       </ListItem>
-                      <Divider variant="fullWidth"  />
+                      <Divider variant="fullWidth" />
                     </>
                   ))}
                 </List>
@@ -408,7 +437,6 @@ function Cart() {
                   display: "flex",
                   flexDirection: "column",
                   gap: "20px",
-                 
                 }}
               >
                 <Box
@@ -554,13 +582,41 @@ function Cart() {
             <Box
               sx={{
                 padding: "25px",
-                width: "full",
+                width: "100%",
                 height: "11vh",
                 boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
                 borderRadius: "10px",
+                display:"flex",
+                flexDirection:"column",
+                gap:"15px",
+                justifyContent:"center",
+                alignItems:"center",
               }}
             >
-              <Typography>Cart is Empty.</Typography>
+              <Typography
+                sx={{
+                  textAlign: "center",
+                  fontSize: {
+                    xs: "18px",
+                    sm: "18px",
+                    md: "18px",
+                    xl: "18px",
+                  },
+                  fontWeight: 600,
+                }}
+              >
+                Cart is Empty.
+              </Typography>
+              <Button
+                    variant="contained"
+                    color="secondary"
+                    component={NavLink}
+                    to="/product"
+                    sx={{ color: "white" }}
+                    startIcon={<ArrowBack />}
+                  >
+                    Go To Shopping
+                  </Button>
             </Box>
           )}
         </Box>

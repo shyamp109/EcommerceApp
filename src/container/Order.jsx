@@ -12,7 +12,7 @@ import { ValidatePath } from "../utills/helper";
 import { useLocation } from "react-router-dom";
 
 function Order() {
-  const { data } = useContext(UserContaxt);
+  // const { data } = useContext(UserContaxt);
   const location = useLocation();
   const path = location.pathname;
   const pathName = ValidatePath({ path });

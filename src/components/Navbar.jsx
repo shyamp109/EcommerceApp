@@ -31,7 +31,7 @@ import { UserContaxt } from "../layout/MainLayout";
 import SearchComponents from "./SearchComponents";
 const navItems = ["Home", "Product", "About", "Contact"];
 const Header = () => {
-  const { data, handleSearchChange, searchItem, setSearchItem,suggestions } =
+  const { user, handleSearchChange, searchItem, setSearchItem,suggestions } =
     useContext(UserContaxt);
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -84,7 +84,7 @@ const Header = () => {
       onClose={handleMenuClose}
     >
       {" "}
-      <MenuItem>Hello, {data?.user?.email}</MenuItem>
+      <MenuItem>Hello, {user?.user?.email}</MenuItem>
       <MenuItem component={NavLink} to="/profile" onClick={handleMenuClose}>
         Profile
       </MenuItem>
@@ -151,7 +151,7 @@ const Header = () => {
         >
           <AccountCircle color="secondary" />
         </IconButton>
-        <p>Hello, {data?.user?.email}</p>
+        <p>Hello, {user?.user?.email}</p>
       </MenuItem>
     </Menu>
   );

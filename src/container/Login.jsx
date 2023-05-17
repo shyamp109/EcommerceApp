@@ -18,6 +18,9 @@ import { IconButton, InputAdornment } from "@mui/material";
 import { api } from "../api/index.js";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import Loader from "../components/Loader";
+import { useDispatch } from "react-redux";
+import { userToken } from "../redux/reducers/authSlice";
+import { setHeaderToken } from "../api/client";
 const CssTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
     "&:hover fieldset": {
@@ -27,6 +30,7 @@ const CssTextField = styled(TextField)({
 });
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch =useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [emailError, setEmailError] = React.useState(false);
@@ -59,8 +63,11 @@ export default function Login() {
       setIsLoading(true);
       try {
         const { data } = await api.auth.login(values);
-        const tokenData = JSON.stringify(data);
-        localStorage.setItem("loginToken", tokenData);
+        console.log("logintoken",data)
+        dispatch(userToken(data))
+        setHeaderToken(data.token);
+        // const tokenData = JSON.stringify(data);
+        // localStorage.setItem("loginToken", tokenData);
         enqueueSnackbar("Login successfully", { variant: "success" });
         setIsLoading(false);
         navigate("/");

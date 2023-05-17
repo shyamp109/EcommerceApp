@@ -17,50 +17,69 @@ import { ValidatePath } from "../utills/helper";
 import { api } from "../api";
 import { UserContaxt } from "../layout/MainLayout";
 import { enqueueSnackbar } from "notistack";
+import { useDispatch, useSelector } from "react-redux";
+import { cartDetails, fetchCartData } from "../redux/reducers/cartSlice";
+import { setHeaderToken } from "../api/client";
+import { fetchProduct } from "../redux/reducers/productSlice";
+import { fetchProductDetail } from "../redux/reducers/productDetailsSlice";
+import Loader from "../components/Loader";
 
 function ProductList() {
-  const {
-    data,
-    products,
-    setProducts,
-    productListRef,
-    noProductsFound,
-    setNoProductsFound,
-  } = useContext(UserContaxt);
-  console.log(data.user.id);
+  const { products, setProducts, productListRef, noProductsFound } =
+    useContext(UserContaxt);
   const navigate = useNavigate();
-  // const [products, setProducts] = useState([]);
   const location = useLocation();
+  const [isLoading, setIsLoading] = React.useState(false);
   const [pathName, setPathName] = useState(false);
-  
-  const productListData = async () => {
-    const { data: productData } = await api.product.get();
-    setProducts(productData.productlist);
-    console.log(productData.productlist);
-  };
+  const { user } = useSelector((state) => state.auth);
+  console.log(user)
+  const product = useSelector((state) => state.productList);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     setPathName(ValidatePath(location.pathname));
-    productListData();
+    dispatch(fetchProduct());
   }, []);
   const AddToCart = async (product) => {
     try {
       const params = {
-        user_id: data.user.id,
+        user_id: user?.user.id,
         product_id: product,
       };
-      // console.log("paramns",params);
-
+      setIsLoading(true);
+      console.log("paramns", params);
       const { data: cartData } = await api.cart.add(params);
       console.log("cart", cartData);
+      dispatch(fetchCartData())
+      setIsLoading(false);
       if (cartData.status !== 200) {
         enqueueSnackbar("Add Product to Cart Successfully", {
           variant: "success",
         });
+        setIsLoading(false);
       } else {
         enqueueSnackbar("Product is already in cart", { variant: "error" });
+        setIsLoading(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      enqueueSnackbar(error, { variant: "error" });
+      setIsLoading(false);
+    }
+  };
+
+  const handleProductItemClick = (productId) => {
+    setIsLoading(true);
+    console.log("product id", productId);
+    dispatch(fetchProductDetail(productId));
+    setIsLoading(false);
+    navigate("ProductDetails", { productId });
   };
   return (
     <>
@@ -88,7 +107,7 @@ function ProductList() {
             <div>No products found.</div>
           ) : (
             <>
-              {products.map((product) => (
+              {product?.productlist?.map((product) => (
                 <Grid item xs={12} sm={6} md={4} key={product.id}>
                   <Card
                     sx={{
@@ -205,6 +224,7 @@ function ProductList() {
             </>
           )}
         </Grid>
+        <Loader open={isLoading} />
       </Container>
     </>
   );

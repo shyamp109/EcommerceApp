@@ -12,6 +12,8 @@ import ProductQuantity from "../components/ProductQuantity";
 import { api } from "../api";
 import { UserContaxt } from "../layout/MainLayout";
 import { enqueueSnackbar } from "notistack";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductDetail } from "../redux/reducers/productDetailsSlice";
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
   width: "50%",
@@ -22,42 +24,27 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
   },
 }));
 function ProductDetails() {
-  const {
-    data,
-    products,
-    setProducts,
-    productListRef,
-    noProductsFound,
-    setNoProductsFound,
-  } = useContext(UserContaxt);
   const location = useLocation();
   const path = location.pathname;
   const pathName = ValidatePath({ path });
   const { id } = useParams();
   console.log(id);
-  const [product, setProduct] = useState(null);
-  const productListData = async () => {
-    const {data} = await api.product.getProductById(id);
-    setProduct(data.product)
-    console.log(data.product);
+  const { user } = useSelector((state) => state.auth);
+  const product = useSelector(state => state.productDetailsSlice);
+  const dispatch = useDispatch();
+  const getProductDetails = () =>{
+    dispatch(fetchProductDetail(id,user.user.id));
   }
-
-  useEffect( () => {
-    productListData();
-  },[]);
-  // useEffect(() => {
-  //   fetch(`https://api.escuelajs.co/api/v1/products/${id}`)
-  //     .then((response) => response.json())
-  //     .then((data) => setProduct(data));
-  // }, [id]);
-
+  useEffect(() => {
+    getProductDetails();
+  }, []);
   if (!product) {
     return <div>Loading...</div>;
   }
   const AddToCart = async (product) => {
     try {
       const params = {
-        user_id: data.user.id,
+        user_id: user?.user?.id,
         product_id: product,
       };
       // console.log("paramns",params);
@@ -102,7 +89,7 @@ function ProductDetails() {
         >
           <Box
             component="img"
-            src={`https://ecommerceserver-4zw1.onrender.com/${product.image}`}
+            src={`https://ecommerceserver-4zw1.onrender.com/${product.product.image}`}
             sx={{
               width: { xs: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" },
               height: "350px",
@@ -126,7 +113,7 @@ function ProductDetails() {
                 lineHeight: 1.5,
               }}
             >
-              <Typography variant="h5">$ {product.price}</Typography>
+              <Typography variant="h5">$ {product.product.price}</Typography>
               <Typography variant="subtitle">
                 Availability: 5 in stock
               </Typography>
@@ -137,12 +124,12 @@ function ProductDetails() {
                   fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
                 }}
               >
-                {product.name}
+                {product.product.name}
               </Typography>
               <Typography color="otherColor" variant="body" sx={{fontSize: { xs: "12px", sm: "12px", md: "15px", xl: "15px" }}}>
               orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
               </Typography>
-              <ProductQuantity />
+              
               <Box
                 sx={{
                   mt: 4,
