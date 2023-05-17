@@ -32,7 +32,6 @@ function ProductList() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [pathName, setPathName] = useState(false);
   const { user } = useSelector((state) => state.auth);
-  console.log(user)
   const product = useSelector((state) => state.productList);
   const dispatch = useDispatch();
 
@@ -53,10 +52,8 @@ function ProductList() {
         user_id: user?.user.id,
         product_id: product,
       };
-      setIsLoading(true);
-      console.log("paramns", params);
+      setIsLoading(true);   
       const { data: cartData } = await api.cart.add(params);
-      console.log("cart", cartData);
       dispatch(fetchCartData())
       setIsLoading(false);
       if (cartData.status !== 200) {

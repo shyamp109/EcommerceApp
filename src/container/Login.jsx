@@ -63,18 +63,14 @@ export default function Login() {
       setIsLoading(true);
       try {
         const { data } = await api.auth.login(values);
-        console.log("logintoken",data)
         dispatch(userToken(data))
         setHeaderToken(data.token);
-        // const tokenData = JSON.stringify(data);
-        // localStorage.setItem("loginToken", tokenData);
         enqueueSnackbar("Login successfully", { variant: "success" });
         setIsLoading(false);
         navigate("/");
       } catch (error) {
         enqueueSnackbar("Invalid Credential", { variant: "error" });
         setIsLoading(false);
-        console.log(error);
       }
     }
   };

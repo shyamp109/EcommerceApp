@@ -41,15 +41,14 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
   },
 }));
 function Cart() {
-  // const { user } = useContext(UserContaxt);
+
   const [isLoading, setIsLoading] = React.useState(false);
-  // const [cart, setCart] = useState([]);
+
   const {cart} = useSelector((state) => state.cartSlice);
-  console.log(cart)
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
   const {user} = useSelector((state) => state.auth);
-  // console.log(data.user.id);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -100,7 +99,7 @@ function Cart() {
   };
 
   const updateCart = async (id, newQty) => {
-    console.log("qty0", newQty);
+  
     const params = {
       id: id,
       qty: {
@@ -130,10 +129,8 @@ function Cart() {
       const { data: updatedCart } = await api.cart.remove(params);
       dispatch(fetchCartData(user?.user?.id));
       enqueueSnackbar("Product Removed From Cart !!", { variant: "success" });
-      // showError('Product Removed from Cart!');
       setIsLoading(false);
     } catch (error) {
-      console.error(error);
       enqueueSnackbar("Something went wrong", { variant: "error" });
       setIsLoading(false);
     }

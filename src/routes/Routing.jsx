@@ -14,12 +14,6 @@ import Home from "../container/Home";
 import Order from "../container/Order";
 export const UserContext = createContext();
 const Routing = () => {
-  const [token, setToken] = useState(null);
-  useEffect(() => {
-    const token = localStorage.getItem("loginToken");
-    console.log(token);
-    setToken(token);
-  },[token]);
   return (
     <Routes>
     

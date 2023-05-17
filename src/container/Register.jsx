@@ -111,12 +111,10 @@ export default function Register() {
       setIsLoading(true);
       try {
         const { data } = await api.auth.register(values);
-        console.log("data", data);
         enqueueSnackbar("Registration successfully", { variant: "success" });
         setIsLoading(false);
         navigate("/login");
       } catch (error) {
-        console.log("error", error);
         enqueueSnackbar("Email is already exists", { variant: "error" });
         setIsLoading(false);
       }

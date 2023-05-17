@@ -86,7 +86,7 @@ if (localStorage.getItem('persist:root')) {
     const userLocal = JSON.parse(localStorage.getItem('persist:root')).auth;
     if (userLocal) {
         const userData = JSON.parse(userLocal);
-        console.log(userData.user.token);
+        // console.log(userData.user.token);
         request.defaults.headers.Authorization = `Bearer ${userData?.user?.token}`;
     }
 }

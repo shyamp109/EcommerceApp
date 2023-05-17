@@ -28,7 +28,6 @@ function ProductDetails() {
   const path = location.pathname;
   const pathName = ValidatePath({ path });
   const { id } = useParams();
-  console.log(id);
   const { user } = useSelector((state) => state.auth);
   const product = useSelector(state => state.productDetailsSlice);
   const dispatch = useDispatch();
@@ -47,10 +46,7 @@ function ProductDetails() {
         user_id: user?.user?.id,
         product_id: product,
       };
-      // console.log("paramns",params);
-
       const { data: cartData } = await api.cart.add(params);
-      console.log("cart", cartData);
       if (cartData.status !== 200) {
         enqueueSnackbar("Add Product to Cart Successfully", {
           variant: "success",
@@ -58,9 +54,10 @@ function ProductDetails() {
       } else {
         enqueueSnackbar("Product is already in cart", { variant: "error" });
       }
-    } catch (error) {}
+    } catch (error) {
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+    }
   };
-  // console.log(product)
   return (
     <>
       <Container sx={{ marginBottom: "50px" }}>

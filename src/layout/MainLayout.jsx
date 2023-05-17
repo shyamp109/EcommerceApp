@@ -15,13 +15,10 @@ const MainLayout = () => {
   const [products, setProducts] = useState([]);
   const [noProductsFound,setNoProductsFound] = useState("");
   const {user} = useSelector(state => state.auth);
-  console.log(user);
   const handleSearchChange = async (event) => {
     try {
       setSearchItem(event.target.value);
-      console.log("kjsdkgjbdf", searchItem);
       const { data } = await api.product.search(event.target.value);
-      console.log("daat", data);
       setProducts(data.productlist);
       const suggetData = data.productlist;
       setSuggestions(suggetData);
@@ -31,7 +28,7 @@ const MainLayout = () => {
         setNoProductsFound(false);
       }
     } catch (error) {
-      console.error(error);
+      
       enqueueSnackbar("An error occurred while searching for products.", {
         variant: "error",
       });
