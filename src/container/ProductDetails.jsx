@@ -35,9 +35,10 @@ function ProductDetails() {
   const product = useSelector(state => state.productDetailsSlice);
   const dispatch = useDispatch();
   const getProductDetails = () =>{
-    dispatch(fetchProductDetail(id,user.user.id));
+    dispatch(fetchProductDetail(id,user.user.id)).then(()=>setIsLoading(false));
   }
   useEffect(() => {
+    setIsLoading(true);
     getProductDetails();
   }, []);
   if (!product) {
