@@ -95,7 +95,7 @@ function ProductDetails() {
         >
           <Box
             component="img"
-            src={`https://ecommerceserver-4zw1.onrender.com/${product.product.image}`}
+            src={`https://ecommerceserver-4zw1.onrender.com/${product?.product?.image}`}
             sx={{
               width: { xs: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" },
               height: "350px",
@@ -119,7 +119,7 @@ function ProductDetails() {
                 lineHeight: 1.5,
               }}
             >
-              <Typography variant="h5">$ {product.product.price}</Typography>
+              <Typography variant="h5">$ {product?.product?.price}</Typography>
               <Typography variant="subtitle">
                 Availability: 5 in stock
               </Typography>
@@ -130,7 +130,7 @@ function ProductDetails() {
                   fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
                 }}
               >
-                {product.product.name}
+                {product?.product?.name}
               </Typography>
               <Typography color="otherColor" variant="body" sx={{fontSize: { xs: "12px", sm: "12px", md: "15px", xl: "15px" }}}>
               orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
