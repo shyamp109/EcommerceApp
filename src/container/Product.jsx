@@ -120,11 +120,11 @@ function ProductList() {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            marginTop: "25px",
           }}
         >
           <Typography
             ref={productListRef}
-            mt={3}
             color="secondary"
             textAlign="left"
             sx={{
@@ -135,12 +135,17 @@ function ProductList() {
             Product List
           </Typography>
 
-          <FormControl color="secondary">
-            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+          <FormControl
+            variant="standard"
+            sx={{ m: 1, minWidth: 120 }}
+            color="secondary"
+            size="medium"
+          >
+            <InputLabel id="demo-simple-select-label">Sort Product</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              label="Age"
+              label="Sorting Product"
             >
               <MenuItem onClick={handleAsendingData} value="asc">
                 Low to High
