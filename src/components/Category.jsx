@@ -37,7 +37,7 @@ function CategorySwiper() {
   const location = useLocation();
   const [pathName, setPathName] = useState(false);
   const navigate = useNavigate();
-  
+
   const dispatch = useDispatch();
   useEffect(() => {
     setPathName(ValidatePath(location.pathname));
@@ -71,27 +71,6 @@ function CategorySwiper() {
         )}
       </Container>
       <>
-        {/* <Swiper
-        effect={"coverflow"}
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView={"auto"}
-        // autoplay={{
-        //   delay: 550,
-        //   disableOnInteraction: false,
-        //   pauseOnMouseEnter: true,
-        // }}
-        loop={true}
-        modules={[Autoplay, Pagination, Navigation]}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 1,
-          slideShadows: false,
-        }}
-        className="mySwiper"
-      > */}
         <Box
           sx={{
             display: "flex",
@@ -108,6 +87,7 @@ function CategorySwiper() {
               // <SwiperSlide key={i}>
               <div
                 onClick={() => handleGetCategoryProduct(img.categoryName)}
+                key={img.id}
                 style={{
                   display: "flex",
                   justifyContent: "center",

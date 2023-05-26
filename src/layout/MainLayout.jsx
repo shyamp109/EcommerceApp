@@ -17,7 +17,6 @@ const MainLayout = () => {
   const [search, setSearch] = useState(false);
   const [noProductsFound, setNoProductsFound] = useState("");
   const { user } = useSelector((state) => state.auth);
-  console.log(user?.token);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
   useEffect(() => {
@@ -30,7 +29,6 @@ const MainLayout = () => {
       const { data } = await api.product.search(event.target.value);
       setProducts(data?.data?.Footerproduct);
       const suggetData = data?.data?.product;
-      // console.log(data.data.product);
       setSuggestions(suggetData);
       if (data?.productlist?.length === 0) {
         setNoProductsFound(true);
