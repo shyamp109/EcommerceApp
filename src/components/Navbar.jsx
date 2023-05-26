@@ -4,6 +4,11 @@ import {
   Badge,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Drawer,
   IconButton,
@@ -20,7 +25,7 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import MenuItem from "@mui/material/MenuItem";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../index.css";
 import { ShoppingCart } from "@mui/icons-material";
 import styled from "@emotion/styled";
@@ -29,7 +34,8 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { UserContaxt } from "../layout/MainLayout";
 import SearchComponents from "./SearchComponents";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { userToken } from "../redux/reducers/authSlice";
 const navItems = ["Home", "Product", "About", "Contact"];
 const Header = () => {
   const {
@@ -44,12 +50,34 @@ const Header = () => {
 
   const { cart } = useSelector((state) => state.cartSlice);
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+  const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [open, setOpen] = useState(false);
+
+  const handleLogout = () => {
+    setOpen(true);
+  };
+
+  const handleConfirmLogout = () => {
+    // Perform logout logic here
+    setAnchorEl(null);
+    handleMobileMenuClose();
+    localStorage.clear();
+    dispatch(
+      userToken({
+        token: null,
+      })
+    );
+    setOpen(false);
+  };
+
+  const handleCancelLogout = () => {
+    setOpen(false);
+  };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -70,11 +98,14 @@ const Header = () => {
   const handleSerachBarDailog = () => {
     setSearch(true);
   };
-  const logout = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-    localStorage.clear();
-  };
+  // const logout = () => {
+  //   const confirmLogout = window.confirm("Are you sure you want to logout?");
+  //   if (confirmLogout) {
+  //     setAnchorEl(null);
+  //     handleMobileMenuClose();
+  //     localStorage.clear();
+  //   }
+  // };
   useEffect(() => {}, [cart]);
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -98,9 +129,32 @@ const Header = () => {
       <MenuItem component={NavLink} to="/profile" onClick={handleMenuClose}>
         Profile
       </MenuItem>
-      <MenuItem component={NavLink} to="/login" onClick={() => logout()}>
-        Logout
-      </MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <Dialog open={open} onClose={handleCancelLogout}>
+        <DialogTitle>Logout Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="standard"
+            onClick={handleCancelLogout}
+            color="secondary"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="standard"
+            onClick={handleConfirmLogout}
+            color="secondary"
+            autoFocus
+          >
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Menu>
   );
 

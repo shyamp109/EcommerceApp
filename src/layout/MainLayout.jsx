@@ -17,6 +17,7 @@ const MainLayout = () => {
   const [search, setSearch] = useState(false);
   const [noProductsFound, setNoProductsFound] = useState("");
   const { user } = useSelector((state) => state.auth);
+  console.log(user?.token);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
   useEffect(() => {
@@ -43,7 +44,7 @@ const MainLayout = () => {
     }
   };
   const NavigatePerUser = () => {
-    if (user.token === null) {
+    if (user?.token === null) {
       return <Navigate to={"/login"} />;
     } else {
       return <Outlet />;
