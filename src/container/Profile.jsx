@@ -1,122 +1,148 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Typography,
   Container,
   Box,
- 
   TextField,
   Grid,
   Button,
- 
   IconButton,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 import images from "../assets/images/slider1.jpg";
 import { ValidatePath } from "../utills/helper";
-import { PhotoCamera } from "@mui/icons-material";
+import {
+  EditOffOutlined,
+  FileDownloadDoneRounded,
+  PhotoCamera,
+} from "@mui/icons-material";
 
 function Profile() {
-  
   const [image, setImage] = useState(images);
   const location = useLocation();
   const path = location.pathname;
-  const pathName = ValidatePath({path});
-  const onImageChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      setImage(URL.createObjectURL(event.target.files[0]));
-    }
+  const pathName = ValidatePath({ path });
+  const fileInputRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(image);
+  const handleFileUpload = () => {
+    const file = fileInputRef.current.files[0];
+    console.log(file);
+    const imageURL = URL.createObjectURL(file);
+    setSelectedImage(imageURL);
   };
- 
+
+  // const onImageChange = (event) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     setImage(URL.createObjectURL(event.target.files[0]));
+  //   }
+  // };
+
   return (
     <>
-      <Container sx={{ marginBottom: "50px" }}>
-        {/* <Typography
-          color="otherColor"
-          textAlign="left"
-          mt={4}
-          sx={{
-            fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-          }}
-          component="h3"
-        >
-          Your Profile
-        </Typography> */}
-         {pathName && 
+      <Container
+        sx={{
+          marginBottom: "50px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {pathName && (
           <>
             <Typography
+              color="otherColor"
+              textAlign="left"
+              sx={{
+                fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+              }}
+              component="h3"
+            >
+              {pathName}
+            </Typography>
+          </>
+        )}
+        <Box
+          sx={{
+            padding: { xs: 2, sm: 2, md: 4 },
+            display: "flex",
+            flexDirection: "column",
+            width: "fit-content",
+            borderRadius: 3,
+            boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+          }}
+        >
+          <Typography
             color="otherColor"
             textAlign="left"
+            mt={1}
             sx={{
               fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
             }}
             component="h3"
           >
-            {pathName}
+            Edit Information
           </Typography>
-          </>
-        }
-        <Box
-          sx={{
-            padding: 4,
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-
-            borderRadius: 3,
-            boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-          }}
-        >
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
+              marginTop: "10px",
             }}
           >
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
+                flexDirection: { xs: "column", sm: "column", md: "row" },
+                justifyContent: "flex-end",
+                alignItems: {
+                  xs: "flex-start",
+                  sm: "flex-start",
+                  md: "flex-end",
+                },
+                gap: "20px",
               }}
             >
-              <img
-                alt="previewimage"
-                src={image}
-                height={100}
-                width={100}
-                style={{ borderRadius: "100%" }}
-              />
-              <div
-                style={{
-                  backgroundColor: "gray",
-                  borderRadius: "100%",
-                  position:"absolute",
-                  marginTop:"45px",
-                  marginLeft:"80px",
-                  width:"30px",
-                  height:"30px",
-                  display:"flex",
-                  justifyContent:"center",
-                  alignItems:"center"
-                }}
-              >
-                <IconButton
-                  color="secondary"
-                  aria-label="upload picture"
-                  component="label"
-                >
+              {selectedImage && (
+                <img
+                  alt="previewimage"
+                  src={selectedImage}
+                  height={150}
+                  width={150}
+                  style={{ borderRadius: "20px" }}
+                />
+              )}
+
+              <div>
+                <div style={{ display: "flex", gap: "15px" }}>
                   <input
-                    hidden
-                    accept="image/*"
                     type="file"
-                    onChange={onImageChange}
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
                   />
-                  <PhotoCamera />
-                </IconButton>
+                  <Button
+                    onClick={() => fileInputRef.current.click()}
+                    variant="contained"
+                    color="secondary"
+                    sx={{ color: "white" }}
+                  >
+                    Choose a file
+                  </Button>
+                  <Button
+                    onClick={handleFileUpload}
+                    variant="contained"
+                    color="secondary"
+                    sx={{ color: "white" }}
+                  >
+                    upload
+                  </Button>
+                </div>
+                <Typography mt={2}>
+                  Acceptable formats jpg ,png only <br />
+                  Max file size is 500 kb and minimum file size is 70kb
+                </Typography>
               </div>
             </Box>
           </Box>
@@ -126,11 +152,48 @@ function Profile() {
             noValidate
             sx={{ mt: 1 }}
           >
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+            <Typography
+              color="secondary"
+              textAlign="left"
+              mt={1}
+              sx={{
+                fontSize: { xs: "20px", sm: "20px", md: "25px", xl: "40px" },
+              }}
+              component="h3"
+            >
+              Account Information
+            </Typography>
+            <Grid container mt={1} spacing={2}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  flexDirection: "row",
+
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  First Name
+                </Typography>
                 <TextField
                   color="secondary"
-                  sx={{ borderColor: "red" }}
+                  sx={{ borderColor: "red", flex: 0.5 }}
                   autoComplete="given-name"
                   name="firstName"
                   required
@@ -140,54 +203,147 @@ function Profile() {
                   autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  Last Name
+                </Typography>
                 <TextField
+                  color="secondary"
+                  sx={{ borderColor: "red", flex: 0.5 }}
+                  autoComplete="given-name"
+                  name="lastname"
                   required
                   fullWidth
-                  color="secondary"
-                  id="lastName"
+                  id="lastname"
                   label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  autoFocus
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
                   color="secondary"
-                  id="email"
-                  label="Email Address"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  Email
+                </Typography>
+                <TextField
+                  color="secondary"
+                  sx={{ borderColor: "red", flex: 0.5 }}
+                  autoComplete="given-name"
                   name="email"
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
                   required
                   fullWidth
+                  id="email"
+                  label="Email address"
+                  autoFocus
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  Address Line 1
+                </Typography>
+                <TextField
+                  color="secondary"
+                  sx={{ borderColor: "red", flex: 0.5 }}
+                  autoComplete="given-name"
                   name="address"
-                  label="address"
-                  id="address"
-                  autoComplete="address"
-                  color="secondary"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
                   required
                   fullWidth
-                  name="number"
-                  label="Contact number"
-                  id="number"
-                  autoComplete="number"
-                  color="secondary"
+                  id="address"
+                  label="Address Line 1"
+                  autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  City / Town
+                </Typography>
                 <TextField
                   color="secondary"
-                  sx={{ borderColor: "red" }}
+                  sx={{ borderColor: "red", flex: 0.5 }}
                   autoComplete="given-name"
                   name="city"
                   required
@@ -197,19 +353,123 @@ function Profile() {
                   autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  State
+                </Typography>
                 <TextField
+                  color="secondary"
+                  sx={{ borderColor: "red", flex: 0.5 }}
+                  autoComplete="given-name"
+                  name="state"
                   required
                   fullWidth
-                  color="secondary"
                   id="state"
                   label="State"
-                  name="state"
-                  autoComplete="family-name"
+                  autoFocus
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  Country
+                </Typography>
+                <TextField
+                  color="secondary"
+                  sx={{ borderColor: "red", flex: 0.5 }}
+                  autoComplete="given-name"
+                  name="country"
+                  required
+                  fullWidth
+                  id="country"
+                  label="country"
+                  autoFocus
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                sx={{
+                  flexDirection: "row",
+                  gap: "20px",
+                }}
+              >
+                <Typography
+                  color="secondary"
+                  textAlign="left"
+                  mt={1}
+                  sx={{
+                    fontSize: {
+                      xs: "10px",
+                      sm: "13px",
+                      md: "15px",
+                      xl: "20px",
+                    },
+                    // width: "130px",
+                  }}
+                  component="h3"
+                >
+                  Postal Code
+                </Typography>
+                <TextField
+                  color="secondary"
+                  sx={{ borderColor: "red", flex: 0.5 }}
+                  autoComplete="given-name"
+                  name="pincode"
+                  required
+                  fullWidth
+                  id="pincode"
+                  label="pincode"
+                  autoFocus
                 />
               </Grid>
             </Grid>
-            <Box sx={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+
+            {/* <Box sx={{ display: "flex", flexDirection: "row", gap: "20px" }}>
               <Button
                 color="secondary"
                 type="submit"
@@ -226,7 +486,7 @@ function Profile() {
               >
                 Save
               </Button>
-            </Box>
+            </Box> */}
           </Box>
         </Box>
       </Container>

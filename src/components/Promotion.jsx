@@ -12,11 +12,11 @@ export const PromotionsContainer = styled(Box)(({ theme }) => ({
   alignItems: "center",
   padding: "20px 0px 20px 0px",
   overflow: "hidden",
-  background: "#d1adcc",
+  background: "#E6B713",
 }));
 
 export const MessageText = styled(Typography)(({ theme }) => ({
-     fontFamily: '"Montez", "cursive"',
+  fontFamily: '"Montez", "cursive"',
   [theme.breakpoints.up("md")]: {
     fontSize: "3rem",
   },
@@ -32,17 +32,17 @@ const messages = [
 export default function Promotions() {
   const containerRef = useRef();
   const [show, setShow] = useState(true);
-    const [messageIndex, setMessageIndex] = useState(0);
-    useEffect(() => {
-            setTimeout(() => {
-              setShow(false);
-            }, 3000);
+  const [messageIndex, setMessageIndex] = useState(0);
+  useEffect(() => {
+    setTimeout(() => {
+      setShow(false);
+    }, 3000);
     const intervalId = setInterval(() => {
       // get next message
       setMessageIndex((i) => (i + 1) % messages.length);
 
       // slide the message in
-        setShow(true);
+      setShow(true);
 
       setTimeout(() => {
         setShow(false);
@@ -66,9 +66,7 @@ export default function Promotions() {
         }}
       >
         <Box display="flex" justifyContent="center" alignItems="center">
-          <MessageText>
-            {messages[messageIndex]}
-          </MessageText>
+          <MessageText>{messages[messageIndex]}</MessageText>
         </Box>
       </Slide>
     </PromotionsContainer>

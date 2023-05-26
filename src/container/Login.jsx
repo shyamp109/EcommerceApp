@@ -30,7 +30,7 @@ const CssTextField = styled(TextField)({
 });
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch =useDispatch();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [emailError, setEmailError] = React.useState(false);
@@ -63,8 +63,9 @@ export default function Login() {
       setIsLoading(true);
       try {
         const { data } = await api.auth.login(values);
-        dispatch(userToken(data))
-        setHeaderToken(data.token);
+        dispatch(userToken(data));
+        // console.log(data.data.token);
+        setHeaderToken(data.data.token);
         enqueueSnackbar("Login successfully", { variant: "success" });
         setIsLoading(false);
         navigate("/");
@@ -98,117 +99,117 @@ export default function Login() {
   };
   return (
     <>
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            padding: 4,
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 3,
+            boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography color="secondary" component="h1" variant="h5">
+            Sign in
+          </Typography>
           <Box
-            sx={{
-              padding: 4,
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 3,
-              boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-            }}
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography color="secondary" component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              sx={{ mt: 1 }}
+            <CssTextField
+              margin="normal"
+              required
+              fullWidth
+              color="secondary"
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              error={Boolean(emailError)}
+              onChange={handleEmailChange}
+              helperText={emailError}
+            />
+            <CssTextField
+              color="secondary"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              autoComplete="current-password"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleTogglePasswordVisibility}
+                    >
+                      {showPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={Boolean(passwordError)}
+              onChange={handlePasswordChange}
+              helperText={passwordError}
+            />
+            <Grid
+              item
+              xs
+              sx={{
+                textAlign: "right",
+              }}
             >
-              <CssTextField
-                margin="normal"
-                required
-                fullWidth
+              <Link
                 color="secondary"
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                error={Boolean(emailError)}
-                onChange={handleEmailChange}
-                helperText={emailError}
-              />
-              <CssTextField
-                color="secondary"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                id="password"
-                autoComplete="current-password"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleTogglePasswordVisibility}
-                      >
-                        {showPassword ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                error={Boolean(passwordError)}
-                onChange={handlePasswordChange}
-                helperText={passwordError}
-              />
-              <Grid
-                item
-                xs
-                sx={{
-                  textAlign: "right",
-                }}
+                href="#"
+                variant="body2"
+                sx={{ textDecoration: "none" }}
               >
-                <Link
+                Forgot password?
+              </Link>
+            </Grid>
+            <Button
+              color="secondary"
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, color: "white" }}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item sx={{ textAlign: "center" }}>
+                <Typography
+                  component={NavLink}
+                  to="/register"
                   color="secondary"
-                  href="#"
                   variant="body2"
                   sx={{ textDecoration: "none" }}
                 >
-                  Forgot password?
-                </Link>
+                  {"Don't have an account? Sign Up"}
+                </Typography>
               </Grid>
-              <Button
-                color="secondary"
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2, color: "white" }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item sx={{ textAlign: "center" }}>
-                  <Typography
-                    component={NavLink}
-                    to="/register"
-                    color="secondary"
-                    variant="body2"
-                    sx={{ textDecoration: "none" }}
-                  >
-                    {"Don't have an account? Sign Up"}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
+            </Grid>
           </Box>
-        </Container>
+        </Box>
+      </Container>
       <Loader open={isLoading} />
     </>
   );

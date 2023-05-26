@@ -8,6 +8,11 @@ import {
   Container,
   Button,
   Box,
+  Pagination,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 import { Shop, ShoppingBag, ViewAgendaOutlined } from "@mui/icons-material";
@@ -18,7 +23,11 @@ import { api } from "../api";
 import { UserContaxt } from "../layout/MainLayout";
 import { enqueueSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
-import { cartDetails, fetchCartData } from "../redux/reducers/cartSlice";
+import {
+  cartData,
+  cartDetails,
+  fetchCartData,
+} from "../redux/reducers/cartSlice";
 import { setHeaderToken } from "../api/client";
 import { fetchProduct } from "../redux/reducers/productSlice";
 import { fetchProductDetail } from "../redux/reducers/productDetailsSlice";
@@ -34,7 +43,10 @@ function ProductList() {
   const { user } = useSelector((state) => state.auth);
   const product = useSelector((state) => state.productList);
   const dispatch = useDispatch();
-
+  const [paginatedProducts, setPaginatedProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4; // Number of products to display per page
+  const [sortOrder, setSortOrder] = useState([]);
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
@@ -43,87 +55,138 @@ function ProductList() {
   }, []);
 
   useEffect(() => {
+    const data = "";
     setPathName(ValidatePath(location.pathname));
-    dispatch(fetchProduct());
+    dispatch(fetchProduct())
+      .then((response) => {
+        setSortOrder(response.payload);
+        // console.log(response.payload);
+        setPaginatedProducts(response.payload.slice(0, pageSize));
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
   }, []);
+
   const AddToCart = async (product) => {
     try {
-      const params = {
-        user_id: user?.user.id,
+      const values = {
         product_id: product,
       };
-      setIsLoading(true);   
-      const { data: cartData } = await api.cart.add(params);
-      dispatch(fetchCartData(user?.user.id))
+      setIsLoading(true);
+      const { data } = await api.cart.add(values);
+      dispatch(fetchCartData());
+      console.log(data);
       setIsLoading(false);
-      if (cartData.status !== 200) {
-        enqueueSnackbar("Add Product to Cart Successfully", {
-          variant: "success",
-        });
-        setIsLoading(false);
-      } else {
-        enqueueSnackbar("Product is already in cart", { variant: "error" });
-        setIsLoading(false);
-      }
+      enqueueSnackbar("Product is added into cart", { variant: "success" });
+      setIsLoading(false);
     } catch (error) {
       enqueueSnackbar(error, { variant: "error" });
       setIsLoading(false);
     }
   };
+  const handlePageChange = (event, page) => {
+    const newStartIndex = (page - 1) * pageSize;
+    const newEndIndex = page * pageSize;
+    setPaginatedProducts(sortOrder.slice(newStartIndex, newEndIndex));
+    setCurrentPage(page);
+  };
+  const handleProductDetail = (id) => {
+    navigate("/productDetails", {
+      state: {
+        productId: id,
+      },
+    });
+  };
+  const handleAsendingData = () => {
+    const sortedProducts = [...product].sort((a, b) => a.price - b.price);
+    setSortOrder(sortedProducts);
+    setPaginatedProducts(sortedProducts.slice(0, pageSize));
+    setCurrentPage(1);
+  };
+  const handleDescendingData = () => {
+    const sortedProducts = [...product].sort((a, b) => b.price - a.price);
+    setSortOrder(sortedProducts);
+    setPaginatedProducts(sortedProducts.slice(0, pageSize));
+    setCurrentPage(1);
+  };
 
-  // const handleProductItemClick = (productId) => {
-  //   setIsLoading(true);
-  //   console.log("product id", productId);
-  //   dispatch(fetchProductDetail(productId));
-  //   setIsLoading(false);
-  //   navigate("ProductDetails", { productId });
-  // };
   return (
     <>
       <Container sx={{ marginBottom: "50px", marinTop: "25px" }}>
-        <CategoryList />
-        {pathName && (
-          <>
-            <Typography
-              ref={productListRef}
-              mt={3}
-              color="otherColor"
-              textAlign="left"
-              sx={{
-                fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
-              }}
-              component="h3"
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            ref={productListRef}
+            mt={3}
+            color="secondary"
+            textAlign="left"
+            sx={{
+              fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
+            }}
+            component="h3"
+          >
+            Product List
+          </Typography>
+
+          <FormControl color="secondary">
+            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Age"
             >
-              Product List
-            </Typography>
-          </>
-        )}
+              <MenuItem onClick={handleAsendingData} value="asc">
+                Low to High
+              </MenuItem>
+              <MenuItem onClick={handleDescendingData} value="desc">
+                High to Low
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </div>
 
         <Grid ref={productListRef} container spacing={3} sx={{ paddingTop: 5 }}>
           {noProductsFound ? (
             <div>No products found.</div>
           ) : (
             <>
-              {product?.productlist?.map((product) => (
-                <Grid item xs={12} sm={6} md={4} key={product.id}>
+              {paginatedProducts?.map((item) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
                   <Card
                     sx={{
-                      height: "100%",
                       display: "flex",
                       justifyContent: "space-between",
                       flexDirection: "column",
                       textDecoration: "none",
+                      borderColor: "#D2AB09",
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
                     }}
                   >
-                    <img
+                    <div
                       style={{
-                        width: "100%",
-                        height: "200px",
-                        objectFit: "contain",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
-                      src={`https://ecommerceserver-4zw1.onrender.com/${product.image}`}
-                      alt={product.name}
-                    />
+                    >
+                      <img
+                        style={{
+                          width: "200px",
+                          height: "200px",
+                          objectFit: "contain",
+                          padding: 5,
+                        }}
+                        src={`https://ecommerce-server-le5a.onrender.com/${item.image}`}
+                        alt={item.name}
+                      />
+                    </div>
                     <CardContent
                       sx={{
                         display: "flex",
@@ -147,11 +210,11 @@ function ProductList() {
                             display: "-webkit-box",
                             overflow: "hidden",
                             WebkitBoxOrient: "vertical",
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: 1,
                           }}
                           variant="h6"
                         >
-                          {product.name}
+                          {item.name}
                         </Typography>
 
                         <Typography
@@ -159,7 +222,7 @@ function ProductList() {
                           variant="h5"
                           component="h6"
                         >
-                          ${product.price}
+                          ₹{item.price}
                         </Typography>
                       </Box>
                       <Box
@@ -168,9 +231,6 @@ function ProductList() {
                           flexDirection: {
                             xs: "column",
                             sm: "column",
-                            md: "row",
-                            lg: "row",
-                            xl: "row",
                           },
                           gap: "10px",
                           justifyContent: "space-between",
@@ -184,20 +244,16 @@ function ProductList() {
                             width: {
                               xs: "100%",
                               sm: "100%",
-                              md: "50%",
-                              lg: "50%",
-                              xl: "50%",
                             },
                           }}
                           variant="contained"
-                          onClick={() => AddToCart(product.id)}
+                          onClick={() => AddToCart(item._id)}
                         >
                           Add Cart
                         </Button>
                         <Button
                           startIcon={<ViewAgendaOutlined />}
-                          component={NavLink}
-                          to={`/productDetails/${product.id}`}
+                          onClick={() => handleProductDetail(item._id)}
                           color="secondary"
                           variant="contained"
                           sx={{
@@ -205,9 +261,6 @@ function ProductList() {
                             width: {
                               xs: "100%",
                               sm: "100%",
-                              md: "50%",
-                              lg: "50%",
-                              xl: "50%",
                             },
                           }}
                         >
@@ -221,6 +274,13 @@ function ProductList() {
             </>
           )}
         </Grid>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Pagination
+            count={Math.ceil(sortOrder?.length / pageSize)}
+            page={currentPage}
+            onChange={handlePageChange}
+          />
+        </Box>
         <Loader open={isLoading} />
       </Container>
     </>

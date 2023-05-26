@@ -11,28 +11,31 @@ import Contact from "../container/Contact";
 import { Route, Routes } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
 import Home from "../container/Home";
-import Order from "../container/Order";
+import Checkout from "../container/Checkout";
+import CategoryListProduct from "../container/CategoryList";
+import OrderHistroy from "../container/OrderHistroy";
+
 export const UserContext = createContext();
 const Routing = () => {
   return (
     <Routes>
-    
-     
-          <Route path="/" element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/product" element={<Product />} />
-            <Route path="/productDetails/:id" element={<ProductDetails />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/order" element={<Order />} />
-            <Route path="/category" element={<CategoryList />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
-          </Route>
-       
-<Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/productDetails" element={<ProductDetails />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<OrderHistroy />} />
+        <Route path="/category" element={<CategoryList />} />
+        <Route path="categoryProduct" element={<CategoryListProduct />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+      </Route>
+
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 };

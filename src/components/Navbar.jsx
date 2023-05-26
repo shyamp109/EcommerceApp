@@ -32,11 +32,19 @@ import SearchComponents from "./SearchComponents";
 import { useSelector } from "react-redux";
 const navItems = ["Home", "Product", "About", "Contact"];
 const Header = () => {
-  const { user, handleSearchChange, searchItem, setSearchItem,suggestions } =
-    useContext(UserContaxt);
-  const {cart} = useSelector((state) => state.cartSlice);
+  const {
+    user,
+    handleSearchChange,
+    searchItem,
+    setSearchItem,
+    suggestions,
+    search,
+    setSearch,
+  } = useContext(UserContaxt);
+
+  const { cart } = useSelector((state) => state.cartSlice);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [search,setSearch]= useState(false);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -59,17 +67,15 @@ const Header = () => {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  const handleSerachBarDailog = () =>{
+  const handleSerachBarDailog = () => {
     setSearch(true);
-  }
+  };
   const logout = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
     localStorage.clear();
   };
-  useEffect(()=>{
-
-  },[cart])
+  useEffect(() => {}, [cart]);
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -88,7 +94,7 @@ const Header = () => {
       onClose={handleMenuClose}
     >
       {" "}
-      <MenuItem>Hello, {user?.user?.email}</MenuItem>
+      <MenuItem>Hello, {user?.data?.user?.firstName}</MenuItem>
       <MenuItem component={NavLink} to="/profile" onClick={handleMenuClose}>
         Profile
       </MenuItem>
@@ -125,7 +131,7 @@ const Header = () => {
           <Badge
             components={NavLink}
             to="/cart"
-            badgeContent={cart?.usercart?.length}
+            badgeContent={cart?.data?.length}
             color="otherColor"
           >
             <ShoppingCart color="secondary" />
@@ -155,7 +161,7 @@ const Header = () => {
         >
           <AccountCircle color="secondary" />
         </IconButton>
-        <p>Hello, {user?.user?.email}</p>
+        <p>Hello, {user?.data?.user?.firstName}</p>
       </MenuItem>
     </Menu>
   );
@@ -171,7 +177,7 @@ const Header = () => {
         color="secondary"
         variant="h4"
         component="div"
-        sx={{ flexGrow: 1, my: 2 }}
+        sx={{ flexGrow: 1, my: 2, textDecoration: "none" }}
       >
         Shopwapp
       </Typography>
@@ -237,7 +243,10 @@ const Header = () => {
                 size="small"
                 label="search here..."
                 sx={{ color: "white" }}
+                onFocus={() => handleSerachBarDailog()}
+                // onBlur={()=>setSearch(false)}
               />
+              {search ? <SearchComponents setSearch={setSearch} /> : null}
             </Box>
 
             <Typography
@@ -245,7 +254,10 @@ const Header = () => {
               variant="h4"
               component={NavLink}
               to="/"
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+              sx={{
+                flexGrow: 1,
+                display: { xs: "none", sm: "block", textDecoration: "none" },
+              }}
             >
               ShopWapp
             </Typography>
@@ -264,7 +276,12 @@ const Header = () => {
               ))}
             </Box>
 
-            <Box sx={{ display: { xs: "none", sm: "none", md: "block" },flexDirection:"column" }}>
+            <Box
+              sx={{
+                display: { xs: "none", sm: "none", md: "block" },
+                flexDirection: "column",
+              }}
+            >
               <TextField
                 variant="outlined"
                 placeholder="Search products..."
@@ -273,12 +290,12 @@ const Header = () => {
                 size="small"
                 label="search here..."
                 sx={{ color: "white" }}
-                onFocus={()=>handleSerachBarDailog()}
+                onFocus={() => handleSerachBarDailog()}
                 // onBlur={()=>setSearch(false)}
               />
-              {search?<SearchComponents setSearch={setSearch} />:null}
+              {search ? <SearchComponents setSearch={setSearch} /> : null}
             </Box>
-            
+
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <IconButton
                 size="large"
@@ -287,7 +304,7 @@ const Header = () => {
                 component={NavLink}
                 to="/cart"
               >
-                <Badge badgeContent={cart?.usercart?.length} color="otherColor">
+                <Badge badgeContent={cart?.data?.length} color="otherColor">
                   <ShoppingCart />
                 </Badge>
               </IconButton>
@@ -347,7 +364,7 @@ const Header = () => {
           <Toolbar />
         </Box>
       </Box>
-      
+
       {renderMobileMenu}
       {renderMenu}
     </>

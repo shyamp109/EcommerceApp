@@ -6,7 +6,7 @@ import {
   ShoppingBagOutlined,
 } from "@mui/icons-material";
 import { useLocation } from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { ValidatePath } from "../utills/helper";
 import ProductQuantity from "../components/ProductQuantity";
 import { api } from "../api";
@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductDetail } from "../redux/reducers/productDetailsSlice";
 import { fetchCartData } from "../redux/reducers/cartSlice";
 import Loader from "../components/Loader";
+import Breadcrumb from "../components/Breadcrumbs";
 export const ProductImage = styled("img")(({ src, theme }) => ({
   src: `url(${src})`,
   width: "50%",
@@ -26,43 +27,45 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
   },
 }));
 function ProductDetails() {
+  const {
+    handleSearchChange,
+    searchItem,
+    setSearchItem,
+    suggestions,
+    search,
+    setSearch,
+  } = useContext(UserContaxt);
   const location = useLocation();
   const path = location.pathname;
   const pathName = ValidatePath({ path });
-  const { id } = useParams();
   const [isLoading, setIsLoading] = React.useState(false);
   const { user } = useSelector((state) => state.auth);
-  const product = useSelector(state => state.productDetailsSlice);
+  const { productId } = location.state;
+  const product = useSelector((state) => state.productDetailsSlice);
+  console.log("user", product?.data?.Product?.name);
   const dispatch = useDispatch();
-  const getProductDetails = () =>{
-    dispatch(fetchProductDetail(id,user.user.id)).then(()=>setIsLoading(false));
-  }
+  const getProductDetails = () => {
+    dispatch(fetchProductDetail(productId)).then(() => setIsLoading(false));
+  };
   useEffect(() => {
     setIsLoading(true);
     getProductDetails();
-  }, []);
+  }, [search]);
   if (!product) {
     return <div>Loading...</div>;
   }
   const AddToCart = async (product) => {
     try {
-      const params = {
-        user_id: user?.user.id,
+      const values = {
         product_id: product,
       };
-      setIsLoading(true);   
-      const { data: cartData } = await api.cart.add(params);
-      dispatch(fetchCartData(user?.user.id))
+      setIsLoading(true);
+      const { data } = await api.cart.add(values);
+      dispatch(fetchCartData());
+      console.log(data);
       setIsLoading(false);
-      if (cartData.status !== 200) {
-        enqueueSnackbar("Add Product to Cart Successfully", {
-          variant: "success",
-        });
-        setIsLoading(false);
-      } else {
-        enqueueSnackbar("Product is already in cart", { variant: "error" });
-        setIsLoading(false);
-      }
+      enqueueSnackbar("Product is added into cart", { variant: "success" });
+      setIsLoading(false);
     } catch (error) {
       enqueueSnackbar(error, { variant: "error" });
       setIsLoading(false);
@@ -96,12 +99,18 @@ function ProductDetails() {
         >
           <Box
             component="img"
-            src={`https://ecommerceserver-4zw1.onrender.com/${product?.product?.image}`}
+            src={`https://ecommerce-server-le5a.onrender.com/${product?.data?.Product?.image}`}
             sx={{
-              width: { xs: "100%", sm: "100%", md: "50%", lg: "50%", xl: "50%" },
+              width: {
+                xs: "100%",
+                sm: "100%",
+                md: "50%",
+                lg: "50%",
+                xl: "50%",
+              },
               height: "350px",
-              objectFit:"contain",
-              borderRadius:"10px",
+              objectFit: "contain",
+              borderRadius: "10px",
               marginTop: "15px",
             }}
           />
@@ -120,9 +129,11 @@ function ProductDetails() {
                 lineHeight: 1.5,
               }}
             >
-              <Typography variant="h5">$ {product?.product?.price}</Typography>
+              <Typography variant="h5">
+                ₹{product?.data?.Product?.price}
+              </Typography>
               <Typography variant="subtitle">
-                Availability: 5 in stock
+                Availability: {product?.data?.Product?.stock} in stock
               </Typography>
               <Typography
                 color="secondary"
@@ -131,12 +142,18 @@ function ProductDetails() {
                   fontSize: { xs: "25px", sm: "30px", md: "35px", xl: "50px" },
                 }}
               >
-                {product?.product?.name}
+                {product?.data?.Product?.name}
               </Typography>
-              <Typography color="otherColor" variant="body" sx={{fontSize: { xs: "12px", sm: "12px", md: "15px", xl: "15px" }}}>
-              orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+              <Typography
+                color="otherColor"
+                variant="body"
+                sx={{
+                  fontSize: { xs: "12px", sm: "12px", md: "15px", xl: "15px" },
+                }}
+              >
+                {product?.data?.Product?.desc}
               </Typography>
-              
+
               <Box
                 sx={{
                   mt: 4,
@@ -152,7 +169,7 @@ function ProductDetails() {
                   color="secondary"
                   variant="contained"
                   sx={{ color: "white", width: "100%" }}
-                  onClick={() => AddToCart(product.id)}
+                  onClick={() => AddToCart(product?.data?.Product?._id)}
                 >
                   Cart
                 </Button>
@@ -165,7 +182,6 @@ function ProductDetails() {
                   Wishlist
                 </Button>
               </Box>
-
             </Box>
           </CardContent>
         </Box>

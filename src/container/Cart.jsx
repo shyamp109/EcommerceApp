@@ -42,10 +42,11 @@ export const ProductImage = styled("img")(({ src, theme }) => ({
 }));
 function Cart() {
   const [isLoading, setIsLoading] = React.useState(false);
-  const {cart} = useSelector((state) => state.cartSlice);
+  const { cart } = useSelector((state) => state.cartSlice);
+  // console.log("cartData", cart.data);
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
-  const {user} = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -53,77 +54,72 @@ function Cart() {
   const pathName = ValidatePath({ path });
   useEffect(() => {
     setIsLoading(true);
-    dispatch(fetchCartData(user?.user?.id)).then(() => setIsLoading(false));
+    dispatch(fetchCartData()).then(() => setIsLoading(false));
   }, []);
 
   useEffect(() => {
-    let subTotal = cart?.usercart?.reduce((acc, item) => {
-      return acc + item?.Product?.price * item.qty;
+    let subTotal = cart?.data?.reduce((acc, item) => {
+      return acc + item?.product_id?.price * item.qty;
     }, 0);
     setSubtotal(subTotal);
     setTotal(subTotal + 100);
   }, [cart]);
-  const decrementQty = (id) => {
-    var newQty;
-    const newCart = cart.usercart.map((item) => {
-      if (item.id === id) {
-        newQty = parseInt(item.qty) - 1;
-        return {
-          ...item,
-          qty: newQty >= 1 ? newQty : 1,
-        };
-      }
-      return item;
-    });
-    dispatch(fetchCartData(user?.user?.id));
-    updateCart(id, newQty);
-  };
-
-  const incrementQty = (id) => {
-    var newQty;
-    const newCart = cart.usercart.map((item) => {
-      if (item.id === id) {
-        newQty = parseInt(item.qty) + 1;
-        return {
-          ...item,
-          qty: newQty >= 1 ? newQty : 1,
-        };
-      }
-      return item;
-    });
-    dispatch(fetchCartData(user?.user?.id));
-    updateCart(id, newQty);
-  };
-
-  const updateCart = async (id, newQty) => {
-  
-    const params = {
-      id: id,
-      qty: {
+  const decrementQty = async (id, qty) => {
+    console.log(id, qty);
+    let newQty = qty;
+    if (qty > 1) {
+      newQty -= 1;
+      const data = {
         qty: newQty,
-      },
-    };
-    setIsLoading(true);
-    try {
-      const response = await api.cart.update(params);
-      enqueueSnackbar("Product Quantity Updated", { variant: "success" });
-      dispatch(fetchCartData(user?.user?.id));
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-      enqueueSnackbar("Something Went Worng", { variant: "error" });
-      setIsLoading(false);
+        id: id,
+      };
+      console.log(data);
+      setIsLoading(true);
+      try {
+        const response = await api.cart.update(data);
+        enqueueSnackbar("Product Quantity Updated", { variant: "success" });
+        dispatch(fetchCartData());
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        enqueueSnackbar("Something Went Worng", { variant: "error" });
+        setIsLoading(false);
+      }
     }
   };
+  const incrementQty = async (id, qty) => {
+    console.log(id, qty);
+    let newQty = parseInt(qty);
+    if (newQty > 0) {
+      newQty += 1;
+      const data = {
+        id: id,
+        qty: newQty,
+      };
+      console.log(data);
+      setIsLoading(true);
+      try {
+        const response = await api.cart.update(data);
+        dispatch(fetchCartData());
+        enqueueSnackbar("Product Quantity Updated", { variant: "success" });
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+        enqueueSnackbar("Something Went Worng", { variant: "error" });
+      }
+    }
+  };
+
+
   const handleRemoveFromCart = async (item) => {
     const params = {
-      user_id: user?.user?.id,
       product_id: item,
     };
     setIsLoading(true);
     try {
       const { data: updatedCart } = await api.cart.remove(params);
-      dispatch(fetchCartData(user?.user?.id));
+      dispatch(fetchCartData());
       enqueueSnackbar("Product Removed From Cart !!", { variant: "success" });
       setIsLoading(false);
     } catch (error) {
@@ -132,26 +128,17 @@ function Cart() {
     }
   };
 
-  const handleOrderPlace = async () => {
-    const pdata = [];
-    cart.forEach((item) => {
-      const productId = item?.Product?.id;
-      pdata.push(productId);
+  const handleCheckOut = () => {
+    navigate("/checkout", {
+      state: {
+        subtotal: subtotal,
+        total: total,
+        cartData: cart?.data.data,
+      },
     });
-    const values = {
-      user_id: user?.user?.id,
-      productlist: pdata,
-    };
-    try {
-      const { data: orderData } = await api.order.add(values);
-      enqueueSnackbar("Order Placed successfully", { variant: "success" });
-      navigate("/order");
-      console.log(orderData);
-    } catch (error) {
-      enqueueSnackbar("Can not placed order", { variant: "success" });
-      console.log(error);
-    }
   };
+
+
   return (
     <>
       <Container sx={{ marginBottom: "50px" }}>
@@ -182,17 +169,17 @@ function Cart() {
               lg: "row",
             },
             gap: "20px",
-            width: "full",
           }}
         >
-          {cart?.usercart?.length > 0 ? (
+          {cart?.data?.length > 0 ? (
             <>
               <Box
                 sx={{
                   padding: "25px",
-                  width: { xs: "full", sm: "full", md: "100%" },
-                  boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
-                  borderRadius: "10px",
+                  flex: 1,
+                  // width: { xs: "full", sm: "full", md: "100%" },
+                  // boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
+                  // borderRadius: "10px",
                 }}
               >
                 <Typography sx={{ fontSize: "25px", fontWeight: 500 }}>
@@ -200,7 +187,7 @@ function Cart() {
                 </Typography>
                 <Divider />
                 <List sx={{ overflowX: "scroll" }}>
-                  {cart?.usercart?.map((cart) => (
+                  {cart?.data?.map((cart) => (
                     <>
                       <ListItem
                         sx={{
@@ -234,23 +221,27 @@ function Cart() {
                           }}
                         >
                           <img
-                            src={`https://ecommerceserver-4zw1.onrender.com/${cart?.Product?.image}`}
+                            src={`https://ecommerce-server-le5a.onrender.com/${cart?.product_id?.image}`}
                             alt="img"
                             width="80px"
                             height="80px"
                           />
                           <Typography
                             sx={{
+                              fontWeight: 500,
+                              display: "-webkit-box",
+                              overflow: "hidden",
+                              WebkitBoxOrient: "vertical",
+                              WebkitLineClamp: 1,
                               fontSize: {
                                 xs: "15px",
                                 sm: "20px",
                                 md: "20px",
                                 xl: "20px",
                               },
-                              fontWeight: 500,
                             }}
                           >
-                            {cart?.Product?.name}
+                            {cart?.product_id?.name}
                           </Typography>
                         </Box>
                         <Box
@@ -283,7 +274,7 @@ function Cart() {
                               color: "white",
                               minWidth: "35px",
                             }}
-                            onClick={() => decrementQty(cart.id)}
+                            onClick={() => decrementQty(cart?._id, cart?.qty)}
                           >
                             -
                           </Button>
@@ -299,14 +290,14 @@ function Cart() {
                               fontWeight: 500,
                             }}
                           >
-                            {cart.qty}
+                            {cart?.qty}
                           </Typography>
                           <Button
                             size="small"
                             variant="contained"
                             color="secondary"
                             style={{ color: "white", minWidth: "35px" }}
-                            onClick={() => incrementQty(cart.id)}
+                            onClick={() => incrementQty(cart?._id, cart?.qty)}
                           >
                             +
                           </Button>
@@ -330,7 +321,7 @@ function Cart() {
                             width: "100px",
                           }}
                         >
-                          ${cart?.Product?.price}
+                          ${cart?.product_id.price}
                         </Typography>
                         <Typography
                           sx={{
@@ -344,12 +335,12 @@ function Cart() {
                             fontWeight: 500,
                           }}
                         >
-                          ${cart?.Product?.price * cart.qty}
+                          ${cart?.product_id?.price * cart?.qty}
                         </Typography>
                         <Box>
                           <Button
                             onClick={() =>
-                              handleRemoveFromCart(cart?.Product?.id)
+                              handleRemoveFromCart(cart?.product_id?._id)
                             }
                           >
                             <DeleteForeverSharp
@@ -434,7 +425,7 @@ function Cart() {
               >
                 <Box
                   sx={{
-                    borderRadius: "10px",
+                    borderRadius: "3px",
                     padding: "20px",
                     boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
                   }}
@@ -542,7 +533,7 @@ function Cart() {
                         fontWeight: 600,
                       }}
                     >
-                      FinalTotal:
+                      Total:
                     </Typography>
                     <Typography
                       sx={{
@@ -560,13 +551,13 @@ function Cart() {
                   </Box>
                   <Divider />
                   <Button
-                    onClick={() => handleOrderPlace()}
+                    onClick={() => handleCheckOut()}
                     variant="contained"
                     color="secondary"
                     sx={{ color: "white", marginTop: "10px", width: "100%" }}
                     startIcon={<ShoppingBagSharp />}
                   >
-                    Place Order
+                    Proceed To CheckOut
                   </Button>
                 </Box>
               </Box>
@@ -578,12 +569,12 @@ function Cart() {
                 width: "100%",
                 height: "11vh",
                 boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
-                borderRadius: "10px",
-                display:"flex",
-                flexDirection:"column",
-                gap:"15px",
-                justifyContent:"center",
-                alignItems:"center",
+                borderRadius: "3px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Typography
@@ -601,15 +592,15 @@ function Cart() {
                 Cart is Empty.
               </Typography>
               <Button
-                    variant="contained"
-                    color="secondary"
-                    component={NavLink}
-                    to="/product"
-                    sx={{ color: "white" }}
-                    startIcon={<ArrowBack />}
-                  >
-                    Go To Shopping
-                  </Button>
+                variant="contained"
+                color="secondary"
+                component={NavLink}
+                to="/product"
+                sx={{ color: "white" }}
+                startIcon={<ArrowBack />}
+              >
+                Go To Shopping
+              </Button>
             </Box>
           )}
         </Box>

@@ -3,21 +3,21 @@ export const api = {
   auth: {
     login: (params) =>
       client({
-        url: "/api/customer/signin",
+        url: "/api/user/signin",
         data: params,
         method: METHODS.POST,
       }),
     register: (params) =>
       client({
-        url: "/api/customer/signup",
+        url: "/api/user/signup",
         data: params,
         method: METHODS.POST,
       }),
   },
   category: {
-    get: () =>
+    get: (data) =>
       client({
-        url: "/category",
+        url: `/api/product/getbycategory/${data}`,
         method: METHODS.GET,
       }),
   },
@@ -25,7 +25,7 @@ export const api = {
   product: {
     get: (data) =>
       client({
-        url: "/api/product/get_all_product",
+        url: "/api/product/getallProduct",
         method: METHODS.GET,
         ...data,
       }),
@@ -70,24 +70,24 @@ export const api = {
         method: METHODS.POST,
       }),
   },
-  category: {
-    get: () =>
-      client({
-        url: "/category",
-        method: METHODS.GET,
-      }),
-    post: (params) =>
-      client({
-        url: "/category",
-        data: params,
-        method: METHODS.POST,
-      }),
-    delete: (params) =>
-      client({
-        url: `/category/${params}`,
-        method: METHODS.DELETE,
-      }),
-  },
+  // category: {
+  //   get: () =>
+  //     client({
+  //       url: "/category",
+  //       method: METHODS.GET,
+  //     }),
+  //   post: (params) =>
+  //     client({
+  //       url: "/category",
+  //       data: params,
+  //       method: METHODS.POST,
+  //     }),
+  //   delete: (params) =>
+  //     client({
+  //       url: `/category/${params}`,
+  //       method: METHODS.DELETE,
+  //     }),
+  // },
   foodCategory: {
     get: () =>
       client({
@@ -115,24 +115,22 @@ export const api = {
       }),
   },
   cart: {
-    add: (params) =>
+    add: (id) =>
       client({
-        url: `/api/product/addtocart/`,
-        data: params,
+        url: "/api/product/addtocart",
+        data: id,
         method: METHODS.POST,
       }),
-    update: (params) =>
+    update: (data) =>
       client({
-        url: `api/product/updatecart/${params.id}`,
-        data: params.qty,
+        url: `/api/product/updatecart/${data.id}`,
+        data: { qty: data.qty },
         method: METHODS.PUT,
-        
       }),
     remove: (params) =>
       client({
-        url: `/api/product/removefromcart/${params.user_id}/${params.product_id}`,
+        url: `/api/product/removefromcart/${params.product_id}`,
         method: METHODS.DELETE,
-       
       }),
     removeMulti: (data) =>
       client({
@@ -142,10 +140,9 @@ export const api = {
       }),
     get: (data) =>
       client({
-        url: `/api/product/getcartproduct/${data}`,
+        url: "/api/product/getusercart",
         method: METHODS.GET,
         ...data,
-        
       }),
   },
   restaurants: {
@@ -210,16 +207,14 @@ export const api = {
       }),
   },
   order: {
-    add: (params) =>
+    add: () =>
       client({
-        url: `/api/product/create_order/`,
-        data: params,
+        url: "/api/product/createorder",
         method: METHODS.POST,
-        
       }),
     get: () =>
       client({
-        url: `/order/getMyOrder`,
+        url: "/api/product/getusersorder",
         method: METHODS.GET,
       }),
     changeStatus: ({ _id, ...params }) =>

@@ -43,7 +43,7 @@ const CheckBreadcrumbs = ({ path }) => {
     );
   }
 };
-const Breadcrumb = ({ path }) => {
+const   Breadcrumb = ({ path }) => {
   const breadcrumb = path.pathname.substring(1).trim();
 
   return (
