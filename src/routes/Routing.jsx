@@ -14,6 +14,8 @@ import Home from "../container/Home";
 import Checkout from "../container/Checkout";
 import CategoryListProduct from "../container/CategoryList";
 import OrderHistroy from "../container/OrderHistroy";
+import Invoice from "../container/Invoice";
+import InvoiceOrder from "../container/Invoice";
 
 export const UserContext = createContext();
 const Routing = () => {
@@ -28,6 +30,8 @@ const Routing = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders" element={<OrderHistroy />} />
+        <Route path="orderInvoice" element={<InvoiceOrder />} />
+
         <Route path="/category" element={<CategoryList />} />
         <Route path="categoryProduct" element={<CategoryListProduct />} />
         <Route path="/contact" element={<Contact />} />

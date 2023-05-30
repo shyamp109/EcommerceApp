@@ -20,13 +20,14 @@ import styled from "@emotion/styled";
 import {
   ArrowBack,
   DeleteForeverSharp,
+  PictureAsPdfOutlined,
   RemoveCircle,
   RemoveShoppingCart,
   Shop2Rounded,
   ShoppingBagSharp,
 } from "@mui/icons-material";
 
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ValidatePath } from "../utills/helper";
 import { api } from "../api";
 import { UserContaxt } from "../layout/MainLayout";
@@ -101,6 +102,10 @@ const OrderHistroy = () => {
         productId: id,
       },
     });
+  };
+
+  const handleOrderInvoice = (id) => {
+    navigate("/orderInvoice", { state: { order_id: id } });
   };
   return (
     <>
@@ -191,6 +196,7 @@ const OrderHistroy = () => {
                         Order Date: {formatDate(order.order.createdAt)}
                       </Typography>
                     </div>
+
                     <Table sx={{ mt: 2 }}>
                       <TableHead>
                         <TableRow>
@@ -226,6 +232,21 @@ const OrderHistroy = () => {
                           </TableRow>
                         ))}
                         <TableRow>
+                          <TableCell colSpan={4} align="right">
+                            <Button
+                              startIcon={<PictureAsPdfOutlined />}
+                              color="secondary"
+                              sx={{
+                                color: "white",
+                              }}
+                              variant="contained"
+                              onClick={() => {
+                                handleOrderInvoice(order);
+                              }}
+                            >
+                              View Invoice
+                            </Button>
+                          </TableCell>
                           <TableCell colSpan={4} align="right">
                             <Typography variant="subtitle1" fontWeight="bold">
                               Total:
