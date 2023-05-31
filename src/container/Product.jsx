@@ -146,7 +146,7 @@ function ProductList() {
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               label="Sorting Product"
-              value={""}
+              value=""
             >
               <MenuItem onClick={handleAsendingData} value="10">
                 Low to High

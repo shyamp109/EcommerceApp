@@ -232,7 +232,7 @@ const OrderHistroy = () => {
                           </TableRow>
                         ))}
                         <TableRow>
-                          <TableCell colSpan={4} align="right">
+                          <TableCell>
                             <Button
                               startIcon={<PictureAsPdfOutlined />}
                               color="secondary"
@@ -247,7 +247,7 @@ const OrderHistroy = () => {
                               View Invoice
                             </Button>
                           </TableCell>
-                          <TableCell colSpan={4} align="right">
+                          <TableCell colSpan={3} align="right">
                             <Typography variant="subtitle1" fontWeight="bold">
                               Total:
                             </Typography>

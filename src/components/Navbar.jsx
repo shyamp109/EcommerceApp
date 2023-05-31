@@ -296,7 +296,7 @@ const Header = () => {
                 onChange={handleSearchChange}
                 size="small"
                 label="search here..."
-                sx={{ color: "white" }}
+                sx={{ color: "white", width: "220px" }}
                 onFocus={() => handleSerachBarDailog()}
                 // onBlur={()=>setSearch(false)}
               />
@@ -343,7 +343,7 @@ const Header = () => {
                 onChange={handleSearchChange}
                 size="small"
                 label="search here..."
-                sx={{ color: "white" }}
+                sx={{ color: "white", width: "220px" }}
                 onFocus={() => handleSerachBarDailog()}
                 // onBlur={()=>setSearch(false)}
               />

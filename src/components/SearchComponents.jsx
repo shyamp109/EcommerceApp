@@ -25,20 +25,45 @@ const SearchComponents = ({ setSearch }) => {
         justifyContent: "flex-end",
         flexDirection: "column",
         listStyle: "none",
-        width: "13.5%",
+        width: "220px",
+        maxHeight: "450px",
       }}
     >
-      <ul>
+      <ul style={{ padding: 0, overflowY: "scroll" }}>
         {suggestions?.map((suggestion) => (
           <li
             onClick={() => {
               setSearch(false);
               navigateDetails(suggestion?._id);
             }}
-            style={{ padding: "15px" }}
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              flexDirection: "row",
+              gap: "15px",
+              padding: "10px",
+              borderWidth: 1,
+              borderColor: "black",
+            }}
             key={suggestion.id}
           >
-            {suggestion?.name}
+            <img
+              src={`https://ecommerce-server-le5a.onrender.com/${suggestion?.image}`}
+              alt={suggestion?.name}
+              style={{ width: "50px", height: "50px" }}
+            />
+            <Typography
+              sx={{
+                fontWeight: 500,
+                display: "-webkit-box",
+                overflow: "hidden",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 1,
+              }}
+            >
+              {suggestion?.name}
+            </Typography>
           </li>
         ))}
       </ul>
