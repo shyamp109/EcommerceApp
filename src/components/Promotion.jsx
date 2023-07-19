@@ -12,7 +12,7 @@ export const PromotionsContainer = styled(Box)(({ theme }) => ({
   alignItems: "center",
   padding: "20px 0px 20px 0px",
   overflow: "hidden",
-  background: "#E6B713",
+  background: "#EA7CA1",
 }));
 
 export const MessageText = styled(Typography)(({ theme }) => ({

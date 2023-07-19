@@ -6,7 +6,7 @@ export const theme = createTheme({
       main: "#ffff", //whitefontforbackgorund
     },
     secondary: {
-      main: "#E6B713", //pinklightbackground
+      main: "#EA7CA1", //pinklightbackground
     },
     otherColor: {
       main: "#403e3e", //fontgary
